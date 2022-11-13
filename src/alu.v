@@ -35,7 +35,7 @@ module alu (
       //SHL
       3'b110:  {o_carry_flag, o_result} <= i_data_1 << i_data_2;
       //SHR
-      3'b111:  {o_carry_flag, o_result} <= i_data_1 >> i_data_2;
+      3'b111:  {o_result, o_carry_flag} <= i_data_1 >> i_data_2;
       //bad opcode
       default: o_result = 16'bx;
     endcase
