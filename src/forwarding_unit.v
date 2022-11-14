@@ -20,7 +20,7 @@ module forwarding_unit (
 endmodule
 // mini do file
 /*
-vsim work.alu
+vsim work.forwarding_unit
 add wave sim:/forwarding_unit/*
 force -freeze sim:/forwarding_unit/i_rs 010 0
 force -freeze sim:/forwarding_unit/i_rd 011 0
