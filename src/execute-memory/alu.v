@@ -22,6 +22,8 @@ module alu (
 );
   always @(*) begin
     case (i_op)
+      //NOP
+      3'b000:  o_result <= ~i_data_1;
       //Not
       3'b001:  o_result <= ~i_data_1;
       //Add
@@ -39,10 +41,12 @@ module alu (
       //bad opcode
       default: o_result = 16'bx;
     endcase
-    // zero flag
-    o_zero_flag <= ~(|o_result);
-    // negative flag
-    o_negative_flag <= o_result[15];
+    if (i_op !== 3'b000) begin
+      // zero flag
+      o_zero_flag <= ~(|o_result);
+      // negative flag
+      o_negative_flag <= o_result[15];
+    end
   end
 endmodule
 // mini do file

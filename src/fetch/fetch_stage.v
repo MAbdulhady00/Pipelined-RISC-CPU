@@ -16,7 +16,7 @@ module fetch_stage (
       .o_data(pc_out)
   );
   // phase 1 always increment
-  generic_mux_2x1 #(32) mux (
+  mux_2x1 #(32) mux (
       pc_out + 1,
       32'b0,
       1'b0,

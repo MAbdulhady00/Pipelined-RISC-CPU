@@ -5,7 +5,7 @@
 * =============================================
 * Test Status = OK 
 */
-module generic_mux_2x1 #(
+module mux_2x1 #(
     parameter N = 1
 ) (
     i_in0,
@@ -20,10 +20,10 @@ module generic_mux_2x1 #(
 endmodule
 // mini do file
 /*
-vsim work.generic_mux_2x1
-add wave sim:/generic_mux_2x1/*
-force -freeze sim:/generic_mux_2x1/i_in0 0 0
-force -freeze sim:/generic_mux_2x1/i_in1 1 0
-force -freeze sim:/generic_mux_2x1/i_sel 1 0
+vsim work.mux_2x1
+add wave sim:/mux_2x1/*
+force -freeze sim:/mux_2x1/i_in0 0 0
+force -freeze sim:/mux_2x1/i_in1 1 0
+force -freeze sim:/mux_2x1/i_sel 1 0
 run
 */

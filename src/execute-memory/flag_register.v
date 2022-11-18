@@ -4,9 +4,9 @@
 * =============================================
 * Test Status = Not tested
 */
-module flag_reg (
-    input      clk,              //clock signal
-    input      rst,              // reset signal
+module flag_register (
+    input      i_clk,            //clock signal
+    input      i_rst,            // reset signal
     input      i_zero_flag,      // zero flag
     input      i_negative_flag,  // negative flag
     input      i_carry_flag,     // carry flag 
@@ -14,13 +14,10 @@ module flag_reg (
     output reg o_negative_flag,  // negative flag
     output reg o_carry_flag      // carry flag 
 );
-  reg [2:0] flags;
-  always @(posedge clk) begin
-    if (rst) {o_zero_flag, o_negative_flag, o_carry_flag} <= 3'b0;
-    else flags <= {i_zero_flag, i_negative_flag, i_carry_flag};
-  end
-  always @(negedge clk) begin
-    if (rst) {o_zero_flag, o_negative_flag, o_carry_flag} <= 3'b0;
-    else {o_zero_flag, o_negative_flag, o_carry_flag} <= flags;
+
+  always @(posedge i_clk) begin
+    if (i_rst) {o_zero_flag, o_negative_flag, o_carry_flag} <= 3'b0;
+    else
+      {o_zero_flag, o_negative_flag, o_carry_flag} <= {i_zero_flag, i_negative_flag, i_carry_flag};
   end
 endmodule

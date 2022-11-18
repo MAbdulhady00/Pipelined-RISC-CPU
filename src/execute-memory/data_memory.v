@@ -9,12 +9,13 @@ module data_memory (
     input      [15:0] i_write_data,    //the data that you want to write on memory
     input             i_memory_read,   //the memory read control signal
     input             i_memory_write,  //the memory write control signal
+    input             i_clk,           // memory clock
     output reg [15:0] o_read_data      //the data that you want to read from memory
 );
 
   reg [15:0] memory[2**12 -1 : 0];  //the size of the memory is 4KB
 
-  always @(*) begin
+  always @(posedge i_clk) begin
 
     if (i_memory_write) begin
       memory[i_address] = i_write_data;
