@@ -12,7 +12,7 @@ module data_memory (
     output reg [15:0] o_read_data      //the data that you want to read from memory
 );
 
-  reg [15:0] memory[2**16 -1 : 0];  //the size of the memory is 2MB
+  reg [15:0] memory[2**12 -1 : 0];  //the size of the memory is 4KB
 
   always @(*) begin
 
