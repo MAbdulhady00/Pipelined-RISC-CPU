@@ -25,8 +25,8 @@ module decode_stage (
     output reg o_branch_flags,
     output [15:0] o_data1,
     output [15:0] o_data2,
-    output [2:0] rd,
-    output [2:0] rs
+    output [2:0] o_rd,
+    output [2:0] o_rs
 );
 
   wire read1, read2;
@@ -69,7 +69,7 @@ module decode_stage (
       .o_data2(o_data2)
   );
 
-  assign rd = i_instr[12:10];
-  assign rs = i_instr[9:7];
+  assign o_rd = i_instr[12:10];
+  assign o_rs = i_instr[9:7];
 
 endmodule

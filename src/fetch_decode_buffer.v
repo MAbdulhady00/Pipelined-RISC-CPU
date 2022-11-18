@@ -1,3 +1,4 @@
+// TODO: flush input
 module fetch_decode_buffer (
     input i_clk,
     input i_reset,
