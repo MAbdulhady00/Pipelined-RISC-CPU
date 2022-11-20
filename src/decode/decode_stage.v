@@ -30,6 +30,7 @@ module decode_stage (
 );
 
   wire read1, read2;
+  
   control_unit_phase_1 cu (
       .i_op_code(i_instr[15:13]),
       .i_interrupt(i_interrupt),
@@ -60,8 +61,8 @@ module decode_stage (
       .i_reset(i_reset),
       .i_read1(read1),
       .i_read2(read2),
-      .i_read_addr1(rd),
-      .i_read_addr2(rs),
+      .i_read_addr1(o_rd),
+      .i_read_addr2(o_rs),
       .i_write(i_write_back),
       .i_write_addr(i_write_addr),
       .i_write_data(i_write_data),

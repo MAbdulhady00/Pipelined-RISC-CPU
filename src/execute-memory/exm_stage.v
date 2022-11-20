@@ -36,7 +36,7 @@ module exm_stage (
     output        o_zero_flag,         // zero flag
     output        o_negative_flag,     // negative flag
     output        o_carry_flag,        // carry flag 
-    output        o_wb_selector,
+    output [1:0]  o_wb_selector,
     output        o_write_back
 );
   wire [15:0] memory_address;
@@ -126,7 +126,7 @@ module exm_stage (
 
 
   // Select data 2 instead of alu result if it is a mov instruction
-  mux_2x1 ex_result (
+  mux_2x1 #(16) ex_result (
       .i_in0(alu_result),
       .i_in1(i_data2),
       .i_sel(i_mov),

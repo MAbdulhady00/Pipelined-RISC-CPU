@@ -10,6 +10,7 @@ module phase_1 (
   wire [2:0] decode_alu_function;
   wire [1:0] decode_wb_selector;
   wire [2:0] decode_branch_selector;
+  wire decode_input_port;
   wire decode_mov;
   wire decode_write_back;
   wire decode_inc_dec;
@@ -43,10 +44,10 @@ module phase_1 (
   wire exm_write_back;
   wire [2:0] exm_alu_function;
   wire [15:0] exm_port;
-  wire exm_i_write_addr;
-  wire exm_i_alu_function;
-  wire exm_i_wb_selector;
-  wire exm_i_branch_selector;
+  wire [2:0] exm_i_write_addr;
+  wire [2:0] exm_i_alu_function;
+  wire [1:0] exm_i_wb_selector;
+  wire [2:0] exm_i_branch_selector;
   wire exm_i_mov;
   wire exm_i_write_back;
   wire exm_i_inc_dec;
@@ -82,7 +83,7 @@ module phase_1 (
   fetch_stage ftch (
       .i_intterup_signal(1'b0),
       .i_clk(i_clk),
-      .i_reset(i_rst),
+      .i_reset(i_reset),
       .o_instr(ftch_instr)
   );
 
@@ -129,7 +130,7 @@ module phase_1 (
       .i_clk(i_clk),
       .i_reset(i_reset),
       .i_alu_function(decode_alu_function),
-      .i_wb_selector(decode_wb_Selector),
+      .i_wb_selector(decode_wb_selector),
       .i_branch_selector(decode_branch_selector),
       .i_mov(decode_mov),
       .i_write_back(decode_write_back),
@@ -150,6 +151,7 @@ module phase_1 (
       .i_data2(decode_data2),
       .i_rd(decode_rd),
       .i_rs(decode_rs),
+      .o_input_port(decode_input_port),
       .o_alu_function(exm_i_alu_function),
       .o_wb_selector(exm_i_wb_selector),
       .o_branch_selector(exm_i_branch_selector),
@@ -245,7 +247,7 @@ module phase_1 (
       .i_wb_selector(wb_i_wb_selector),
       .i_write_back(wb_i_write_back),
       .o_write_data(wb_write_data),
-      .o_write_addr(wb_wire_addr),
+      .o_write_addr(wb_write_addr),
       .o_write_back(wb_write_back)
   );
 
