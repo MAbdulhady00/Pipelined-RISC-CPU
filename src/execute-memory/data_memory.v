@@ -20,7 +20,7 @@ integer i;
 initial begin
   for (i=0; i<=2**12-1; i=i+1)
     memory[i] = 8'h0000;
-  $readmemh ("data.txt", memory);
+  $readmemh ("E:\\Study\\CMP 3\\First Term\\2024\\Computer Arch\\Project\\Pipelined-RISC-CPU\\src\\execute-memory\\data.txt", memory);
 end
 
   always @(posedge i_clk) begin

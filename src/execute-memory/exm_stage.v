@@ -41,12 +41,14 @@ module exm_stage (
 );
   wire [15:0] memory_address;
   wire [15:0] memory_write_data;
-  reg  [15:0] alu_input_1;
-  reg  [15:0] alu_input_2;
+  wire  [15:0] alu_input_1;
+  wire  [15:0] alu_input_2;
   wire [15:0] alu_result;
   wire        zero_flag;  // zero flag
   wire        negative_flag;  // negative flag
   wire        carry_flag;  // carry flag 
+  wire [15:0] forward_imm;
+  wire [15:0] forward_imm_inc;
   assign o_immediate   = i_immediate;
   assign o_wb_selector = i_wb_selector;
   assign o_write_back  = i_write_back;
@@ -82,14 +84,12 @@ module exm_stage (
       .i_sel(i_data1_forward),
       .o_out(alu_input_1)
   );
-  reg [15:0] forward_imm;
   mux_2x1 #(16) mux_alu_foward_2 (
       .i_in0(i_data2),
       .i_in1(i_data_wb),
       .i_sel(i_data2_forward),
       .o_out(forward_imm)
   );
-  reg [15:0] forward_imm_inc;
   mux_2x1 #(16) mux_alu_foward_3 (
       .i_in0(forward_imm),
       .i_in1(i_immediate),

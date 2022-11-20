@@ -8,13 +8,13 @@ module exm_write_back_buffer (
     input [1:0] i_wb_selector,
     input i_write_back,
     input [2:0] i_write_addr,
-    output [2:0] o_write_addr,
-    output [15:0] o_ex_result,
-    output [15:0] o_memory_data,
-    output [15:0] o_immediate,
-    output [15:0] o_port,
-    output [1:0] o_wb_selector,
-    output o_write_back
+    output reg [2:0] o_write_addr,
+    output reg [15:0] o_ex_result,
+    output reg [15:0] o_memory_data,
+    output reg [15:0] o_immediate,
+    output reg [15:0] o_port,
+    output reg  [1:0] o_wb_selector,
+    output reg o_write_back
 );
   always @(posedge i_clk) begin
     if (i_reset) begin

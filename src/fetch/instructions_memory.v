@@ -11,6 +11,15 @@ module instructions_memory (
 );
 
   reg [15:0] memory[2**21 -1 : 0];  //the size of the memory is 2MB
+  
+  integer i;
+
+  initial begin
+    for (i=0; i<=2**21-1; i=i+1)
+      memory[i] = 8'h0000;
+    $readmemh ("E:\\Study\\CMP 3\\First Term\\2024\\Computer Arch\\Project\\Pipelined-RISC-CPU\\src\\fetch\\instruction_data.txt", memory);
+  end
+  
   always @(*) begin
     if (i_enable) begin
       o_read_data = memory[i_address];
@@ -18,16 +27,3 @@ module instructions_memory (
   end
 
 endmodule
-
-/*
-vsim work.data_memory
-add wave sim:/data_memory/*
-force -freeze sim:/data_memory/i_address 0000_0000_0001_0000 0
-force -freeze sim:/data_memory/i_write_data 0000_1010_0000_0000 0
-force -freeze sim:/data_memory/i_memory_read 0 0
-force -freeze sim:/data_memory/i_memory_write 1 0
-run
-force -freeze sim:/data_memory/i_memory_read 1 0
-force -freeze sim:/data_memory/i_memory_write 0 0
-run
-*/

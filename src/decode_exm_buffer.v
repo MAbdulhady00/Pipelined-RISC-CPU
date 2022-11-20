@@ -24,6 +24,7 @@ module decode_exm_buffer (
     input [15:0] i_data2,
     input [2:0] i_rd,
     input [2:0] i_rs,
+    output reg o_input_port,
     output reg [2:0] o_alu_function,
     output reg [1:0] o_wb_selector,
     output reg [2:0] o_branch_selector,

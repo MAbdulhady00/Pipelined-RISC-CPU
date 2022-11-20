@@ -79,7 +79,7 @@ module phase_1 (
   wire [2:0] wb_write_addr;
   wire [15:0] wb_write_data;
 
-  fetch_Stage ftch (
+  fetch_stage ftch (
       .i_intterup_signal(1'b0),
       .i_clk(i_clk),
       .i_reset(i_rst),
@@ -150,7 +150,6 @@ module phase_1 (
       .i_data2(decode_data2),
       .i_rd(decode_rd),
       .i_rs(decode_rs),
-      .o_write_addr(exm_i_write_addr),
       .o_alu_function(exm_i_alu_function),
       .o_wb_selector(exm_i_wb_selector),
       .o_branch_selector(exm_i_branch_selector),
@@ -174,7 +173,7 @@ module phase_1 (
       .o_rd(exm_i_rd),
       .o_rs(exm_i_rs)
   );
-
+  assign exm_i_write_addr = exm_i_rd;
   exm_stage em (
       .i_clk(i_clk),
       .i_reset(i_reset),
