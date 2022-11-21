@@ -15,13 +15,12 @@ module data_memory (
 
   reg [15:0] memory[2**12 -1 : 0];  //the size of the memory is 4KB
 
-integer i;
+  integer i;
 
-initial begin
-  for (i=0; i<=2**12-1; i=i+1)
-    memory[i] = 8'h0000;
-  $readmemh ("E:\\Study\\CMP 3\\First Term\\2024\\Computer Arch\\Project\\Pipelined-RISC-CPU\\src\\execute-memory\\data.txt", memory);
-end
+  initial begin
+    for (i = 0; i <= 2 ** 12 - 1; i = i + 1) memory[i] = 8'h0000;
+    $readmemh("./data.txt", memory);
+  end
 
   always @(posedge i_clk) begin
 

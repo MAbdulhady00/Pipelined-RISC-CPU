@@ -125,10 +125,11 @@ module phase_1 (
       .o_rs(decode_rs)
   );
 
-
+  wire ldm;
+  assign ldm = i_reset | exm_i_imm;
   decode_exm_buffer decode_exm_buff (
       .i_clk(i_clk),
-      .i_reset(i_reset),
+      .i_reset(ldm),
       .i_alu_function(decode_alu_function),
       .i_wb_selector(decode_wb_selector),
       .i_branch_selector(decode_branch_selector),
