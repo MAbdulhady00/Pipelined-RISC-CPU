@@ -1,6 +1,7 @@
 module decode_stage (
     input [15:0] i_instr,
     input i_clk,
+    input i_reset,
     input i_interrupt,
     input i_write_back,
     input [2:0] i_write_addr,

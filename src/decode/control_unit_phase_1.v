@@ -32,7 +32,17 @@ module control_unit_phase_1 (
     o_imm = 1'b0;
     o_read1 = 1'b1;
     o_read2 = 1'b1;
-
+    o_inc_dec = 1'b0;
+    o_mov = 1'b0;
+    o_change_carry = 1'b0;
+    o_carry_value = 1'b0;
+    o_stack_operation = 1'b0;
+    o_stack_function = 1'b0;
+    o_branch_operation = 1'b0;
+    o_branch_selector = 1'b0;
+    o_output_port = 1'b0;
+    o_pop_pc = 1'b0;
+    o_push_pc = 1'b0;
     case (i_op_code)
       3'b101: begin  // NOP
         o_read1 = 1'b0;

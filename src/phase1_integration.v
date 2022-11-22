@@ -42,7 +42,6 @@ module phase_1 (
   wire exm_carry_flag;  // carry flag 
   wire [1:0] exm_wb_selector;
   wire exm_write_back;
-  wire [2:0] exm_alu_function;
   wire [15:0] exm_port;
   wire [2:0] exm_i_write_addr;
   wire [2:0] exm_i_alu_function;
@@ -96,6 +95,7 @@ module phase_1 (
 
   decode_stage ds (
       .i_instr(decode_instr),
+      .i_reset(i_reset),
       .i_clk(i_clk),
       .i_interrupt(1'b0),
       .i_write_back(wb_write_back),
