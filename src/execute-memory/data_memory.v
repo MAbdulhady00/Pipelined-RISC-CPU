@@ -22,7 +22,7 @@ module data_memory (
     $readmemh("./data.txt", memory);
   end
 
-  always @(posedge i_clk) begin
+  always @(negedge i_clk) begin
 
     if (i_memory_write) begin
       memory[i_address] = i_write_data;

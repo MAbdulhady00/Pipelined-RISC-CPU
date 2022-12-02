@@ -10,16 +10,9 @@ module rf_register #(
     output reg [WIDTH-1:0] o_data
 );
 
-  reg [WIDTH-1:0] data;
-
-  always @(posedge i_clk) begin
-    if (i_reset) data <= 0;
-    else if (i_write_enable) data <= i_data;
-  end
-
   always @(negedge i_clk) begin
-    if (i_reset) data <= 0;
-    if (i_read_enable) o_data <= data;
+    if (i_reset) o_data <= 0;
+    else if (i_write_enable) o_data <= i_data;
   end
 
 endmodule
