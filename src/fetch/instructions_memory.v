@@ -7,6 +7,7 @@
 module instructions_memory (
     input      [31:0] i_address,   //the address that you want to read from
     input             i_enable,    //the memory enable control signal
+    input             i_clk,
     output reg [15:0] o_read_data  //the data that you want to read from memory
 );
 
@@ -19,7 +20,7 @@ module instructions_memory (
     $readmemh("./instruction_data.txt", memory);
   end
 
-  always @(*) begin
+  always @(negedge i_clk) begin
     if (i_enable) begin
       o_read_data = memory[i_address];
     end

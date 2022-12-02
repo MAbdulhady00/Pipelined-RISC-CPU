@@ -26,6 +26,7 @@ module fetch_stage (
   instructions_memory imem (
       .i_address(pc_out),
       .i_enable(1'b1),
+      .i_clk(i_clk),
       .o_read_data(o_instr)
   );
 

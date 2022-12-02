@@ -16,7 +16,6 @@ module data_memory (
   reg [15:0] memory[2**12 -1 : 0];  //the size of the memory is 4KB
 
   integer i;
-  integer j;
 
   initial begin
     for (i = 0; i <= 2 ** 12 - 1; i = i + 1) memory[i] = 8'h0000;
@@ -24,26 +23,13 @@ module data_memory (
   end
 
   always @(negedge i_clk) begin
-
     if (i_memory_write) begin
-      j = 0;
-      for (i = 16 * i_address; i < i_address * 16 + 16; i = i + 1) begin
-        memory[i] = i_write_data[j];
-        j = j + 1;
-      end
+      memory[i_address] <= i_write_data;
     end
-
     if (i_memory_read) begin
-      j = 0;
-      for (i = 16 * i_address; i < i_address * 16 + 16; i = i + 1) begin
-        o_read_data[j] = memory[i];
-        j = j + 1;
-      end
-      // else it will be a latch to store the last value
+      o_read_data = memory[i_address];
     end
   end
-
-endmodule
 
 endmodule
 
