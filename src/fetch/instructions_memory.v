@@ -16,7 +16,8 @@ module instructions_memory (
   integer i;
 
   initial begin
-    for (i = 0; i <= 2 ** 21 - 1; i = i + 1) memory[i] = 8'h0000;
+    for (i = 0; i <= 2 ** 21 - 1; i = i + 1) 
+	memory[i] = 8'h0000;
     $readmemh("./instruction_data.txt", memory);
   end
 
