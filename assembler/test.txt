@@ -1,0 +1,13 @@
+.data
+exo 123
+name ffh
+abcdh
+
+
+.code
+LDM R1, 0h
+LDM R2, 2h 
+NOP
+ADD R2, R1
+NOT R1
+STD R2,R1
