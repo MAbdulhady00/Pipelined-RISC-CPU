@@ -1,13 +1,15 @@
 .data
 exo 123
-name ffh
+name ffh ; inline comment
+; comment in data
 abcdh
 
 
 .code
 LDM R1, 0h
-LDM R2, 2h 
+LDM R2, 2h
+; comment in code
 NOP
 ADD R2, R1
-NOT R1
+NOT R1 ; inline comment
 STD R2,R1
