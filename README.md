@@ -76,7 +76,7 @@ The processor is specified using verilog behavioral models.
 
 # Types of Hazards
 
-1. Data-Hazards: Eliminated by alu/memory to aly/memory forwarding.
+1. Data-Hazards: Eliminated by alu/memory to alu/memory forwarding.
    > We don't have load use case since we are using only 4-stage processor.
 2. Control-Hazards: Using static branch prediction to fix this type of hazard
 
