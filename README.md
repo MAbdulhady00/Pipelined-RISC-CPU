@@ -4,7 +4,7 @@ This project aims to create a staged pipeline processor running a RISC ISA. The 
 
 A harvard architecture (different code and data memories) is assumed for memory.
 
-The processor is specified using verilog behavioral models.
+The processor is specified using `verilog` behavioral models.
 
 # Instructions' format of the design
 
@@ -26,11 +26,6 @@ The processor is specified using verilog behavioral models.
 |  JN R_dst   |  11001  | R_dst2 R_dst1 R_dst0 |    xxxxxxxx    |
 |  JC R_dst   |  11010  | R_dst2 R_dst1 R_dst0 |    xxxxxxxx    |
 |  JMP R_dst  |  11011  | R_dst2 R_dst1 R_dst0 |    xxxxxxxx    |
-
-<!-- For pdf styling
-<br>
-<br>
-<br> -->
 
 #### ALU With Immediate
 
@@ -119,12 +114,17 @@ The processor is specified using verilog behavioral models.
 # Types of Hazards
 
 1. Data-Hazards: Eliminated by Alu/Memory to Alu/Memory forwarding depending on the type of instruction.
-   > Note: We don't have load use case since we are using only 4-stage processor. Both Alu/Memory Forwarding is from the result of the WriteBack mux.
+
+   `Note: We don't have load use case since we are using only 4-stage processor. Both Alu/Memory Forwarding is from the result of the WriteBack mux.`
+
 2. Control-Hazards:
+
    1. LDM: 2-memory locations instruction hence we need to fetch 2-times since DataBus is limited to 16-bit only. The second 16-bit fetched are data bits not instruction bits **thus we must flush the Decode/Execute-Memory buffer** in order to avoid executing the instructions' data bits.
    2. Call/Interrupt: Needs 2-cycles to push the 32-bit PC and the 3-bit flags.
    3. RTI/RET: Needs 2-cycles to fetch the 32-bit PC and the 3-bit flags from memory.
-      > Note: PC is larger than memory address space so we use the most significant 3-bit to store the flags while push/pop.
+
+      `Note: PC is larger than memory address space so we use the most significant 3-bit to store the flags while push/pop.`
+
    4. JZ/JN/JC/JMP: Static branch prediction with not taken. Value is ready in decode stage while the result is ready in execute stage.
 
 # Control Unit Design
@@ -138,7 +138,7 @@ wb_selector
 
 **Rtype**: b15 = 0, **Itype**: b15 = 1, **Special**: b14 = 0
 
-# Rtype
+## Rtype
 
 ALU: b14 = 1
 
@@ -160,7 +160,8 @@ Control Signals:
   - (~b15 & b14) & alu_b13
   - (~b15 & b14) & b12
   - (~b15 & b14) & b11
-    > Note: 000 is already no operation on alu. So there will be no issues when b13-b11 = 000
+
+    `Note: 000 is already no operation on alu. So there will be no issues when b13-b11 = 000`
 
 - write_back: always 1
 - wb_selector: 00
@@ -223,7 +224,8 @@ For the following commands:
   - JN(b12-b11 = 01)
   - JC(b12-b11 = 10)
   - JMP(b12-b11 = 11)
-    > All turn on the signal branch_operation, branch_selector = { b12, b11 }
+
+    `All turn on the signal branch_operation, branch_selector = { b12, b11 }`
 
 - Port(b14-b12 = 110):
 
@@ -231,9 +233,11 @@ For the following commands:
   - OUT(b11=1): output_port
 
 - Alu(b14-b12 = 111):
+
   - SHL(b11=0)
   - SHR(b11=1)
-    > All turn on: write_back, wb_selector: 00, imm, alu_function: {11, b11}
+
+    `All turn on: write_back, wb_selector: 00, imm, alu_function: {11, b11}`
 
 # Contributors
 
