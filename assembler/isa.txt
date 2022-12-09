@@ -1,29 +1,29 @@
 {
-  "nop": ["00000"], running
-  "setc": ["00111"], running
-  "clrc": ["00110"], running
-  "call": ["00101", "dst"],
-  "ret": ["00010"],
-  "rti": ["00011"],
-  "not": ["01001", "dst"], running
-  "add": ["01010", "dst", "src"], running
-  "sub": ["01011", "dst", "src"], running
-  "and": ["01100", "dst", "src"], running
-  "or": ["01101", "dst", "src"], running
-  "inc": ["01110", "dst"], running
-  "dec": ["01111", "dst"], running
-  "mov": ["01000", "dst", "src"], running
-  "ldm": ["10010", "dst", "load"], running
-  "ldd": ["10011", "dst", "src"], running
-  "std": ["10000", "src", "dst"], running
-  "push": ["10100", "dst"],
-  "pop": ["10111", "dst"],
-  "jz": ["11000", "dst"], running
-  "jn": ["11001", "dst"], running
-  "jc": ["11010", "dst"], running
-  "jmp": ["11011", "dst"], running
-  "shl": ["11110", "dst", "sh"],
-  "shr": ["11111", "dst", "sh"],
-  "in": ["11100", "dst"],
-  "out": ["11101", "dst"]
+  "nop": running
+  "setc": running
+  "clrc": running
+  "call": not yet
+  "ret": not yet
+  "rti": not yet
+  "not": running
+  "add": running
+  "sub": running
+  "and": running
+  "or": running
+  "inc": running
+  "dec": running
+  "mov": running
+  "ldm": running
+  "ldd": running
+  "std": running
+  "push": not yet
+  "pop": not yet
+  "jz": running
+  "jn": running
+  "jc": running
+  "jmp": running
+  "shl": not yet
+  "shr": not yet
+  "in": not yet
+  "out": not yet
 }
