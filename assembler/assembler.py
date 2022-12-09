@@ -3,7 +3,6 @@
 import argparse
 import json
 from io import TextIOWrapper
-from json import JSONDecoder
 from pathlib import Path
 
 current_line = 0
@@ -77,6 +76,13 @@ def parse_reg(reg: str) -> str:
     return f'{num:0>3}'
 
 
+def parse_num(str_num: str) -> str:
+    raw_num = str_num
+    if raw_num.endswith('h'):
+        raw_num = '0x' + raw_num.rstrip('h')
+    return raw_num
+
+
 def parse_instruction(words: list[str], isa: dict[str, list[str]]) -> list[str]:
     try:
         instr = isa.get(words[0])
@@ -89,20 +95,25 @@ def parse_instruction(words: list[str], isa: dict[str, list[str]]) -> list[str]:
             + f'line {current_line}'
         )
 
-    instr_binary = '0b' + instr[0]
+    instr_binary: list[str] = ['0b', instr[0], '', '', '']
     for idx, action in enumerate(instr[1:]):
-        if action == 'dst' or action == 'src':
-            instr_binary += parse_reg(words[idx + 1])
+        if action == 'dst':
+            instr_binary[2] = parse_reg(words[idx + 1])
+        elif action == 'src':
+            instr_binary[3] = parse_reg(words[idx + 1])
+        elif action == 'sh':
+            raw_num = parse_num(words[idx + 1])
+            instr_binary[4] = int_to_hex(int(raw_num, base=0))
         elif action == 'load':
-            raw_num = words[idx + 1]
-            if raw_num.endswith('h'):
-                raw_num = '0x' + raw_num.rstrip('h')
+            raw_num = parse_num(words[idx + 1])
+            instr_str: str = ''.join(instr_binary)
             return [
-                int_to_hex(int(f'{instr_binary:0<18}', base=0)),
+                int_to_hex(int(f'{instr_str:0<18}', base=0)),
                 int_to_hex(int(raw_num, base=0)),
             ]
 
-    return [int_to_hex(int(f'{instr_binary:0<18}', base=0))]
+    instr_str: str = ''.join(instr_binary)
+    return [int_to_hex(int(f'{instr_str:0<18}', base=0))]
 
 
 def read_code_section(
