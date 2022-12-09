@@ -10,13 +10,13 @@ The processor is specified using `verilog` behavioral models.
 
 #### Memory Instructions
 
-|   Instruction    | Op-Code |    First Operand     |     Second Operand      |
-| :--------------: | :-----: | :------------------: | :---------------------: |
-|  LDM R_dst, Imm  |  10010  | R_dst2 R_dst1 R_dst0 | I7 I6 I5 I4 I3 I2 I1 I0 |
-| LDD R_src, R_dst |  10011  | R_dst2 R_dst1 R_dst0 |  R_src2 R_src1 R_src0   |
-| STD R_src, R_dst |  10000  | R_dst2 R_dst1 R_dst0 |  R_src2 R_src1 R_src0   |
-|    PUSH R_dst    |  10100  | R_dst2 R_dst1 R_dst0 |        xxxxxxxx         |
-|    POP R_dst     |  10111  | R_dst2 R_dst1 R_dst0 |        xxxxxxxx         |
+|   Instruction    | Op-Code |    First Operand     |    Second Operand    |
+| :--------------: | :-----: | :------------------: | :------------------: |
+|  LDM R_dst, Imm  |  10010  | R_dst2 R_dst1 R_dst0 |       xxxxxxxx       |
+| LDD R_src, R_dst |  10011  | R_dst2 R_dst1 R_dst0 | R_src2 R_src1 R_src0 |
+| STD R_src, R_dst |  10000  | R_dst2 R_dst1 R_dst0 | R_src2 R_src1 R_src0 |
+|    PUSH R_dst    |  10100  | R_dst2 R_dst1 R_dst0 |       xxxxxxxx       |
+|    POP R_dst     |  10111  | R_dst2 R_dst1 R_dst0 |       xxxxxxxx       |
 
 #### Branch Instructions
 
