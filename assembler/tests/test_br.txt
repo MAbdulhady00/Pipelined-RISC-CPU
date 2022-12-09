@@ -1,0 +1,22 @@
+.data
+
+.code
+ldm r7, 0
+ldm r0, ffffh
+ldm r6, ffffh
+inc r0
+clrc
+jc r6 ; not taken
+dec r0
+std r0, r7 ; expect ffffh at mem location 0
+
+ldm r6, 54
+ldm r5, 9
+ldm r3, 0
+sub r5, R5
+jz r6
+ldm r7, 2
+std r0, r7
+
+ldm r7, 3 ; jump here 
+std r0, r7

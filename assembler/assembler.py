@@ -198,6 +198,8 @@ def main():
         # fill code
         code = read_code_section(file, isa, config['no_hazards'])
         with open(file_name + '_code.txt', 'w') as code_file:
+            for _ in range(32):
+                code_file.write('0\n')
             for hex_num in code:
                 code_file.write(f'{hex_num:0>4}\n')
     # with open('code.s') as file:

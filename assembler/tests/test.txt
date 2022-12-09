@@ -1,0 +1,42 @@
+.data
+exo 123
+name ffh ; inline comment
+; comment in data
+abcdh
+
+.code
+LDM R0, 1
+LDM R1, 2
+LDM R2, 3
+LDM R3, 4
+LDM R4, 5
+LDM R5, 6
+LDM R6, 7
+LDM R7, 8
+STD R0, R7 ; location 8 = 1
+STD R1, R6
+NOT R5
+NOT R5
+STD R2, R5
+STD R3, R4
+STD R4, R3
+STD R5, R2
+STD R6, R1
+STD R7, R0 ; location 1 = 8 
+ADD R0, R1
+LDM R7, 68
+JMP R7
+;comment
+ADD R0,      R2 ; comment
+ADD R0, R3
+ADD R0, R4
+ADD R0, r5
+ADD R0, R6
+add R0, R7
+
+
+
+lDM R7, ffffh
+NOT R7 ; R7 = 0
+STD R0, R7
+

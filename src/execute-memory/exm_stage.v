@@ -40,8 +40,6 @@ module exm_stage (
 );
   wire [15:0] memory_address;
   wire [15:0] memory_write_data;
-  wire [15:0] alu_input_1;
-  wire [15:0] alu_input_2;
   wire [15:0] alu_result;
   wire        zero_flag_alu;  // alu res zero flag
   wire        negative_flag_alu;  // alu res negative flag
@@ -52,7 +50,7 @@ module exm_stage (
   wire [15:0] forward_imm;
   wire [15:0] forward_imm_inc;
   reg  [15:0] pc_temp;
-  wire        branch_decision;
+  wire [15:0] data1, data2, alu_input_2;
 
   assign o_immediate   = i_immediate;
   assign o_wb_selector = i_wb_selector;
@@ -60,15 +58,15 @@ module exm_stage (
   assign o_write_addr  = i_write_addr;
 
   mux_2x1 #(16) mux_memory_1 (
-      .i_in0(i_data2),
-      .i_in1(i_data1),
+      .i_in0(data2),
+      .i_in1(data1),
       .i_sel(i_stack_operation),
       .o_out(memory_write_data)
   );
 
   mux_2x1 #(16) mux_memory_2 (
-      .i_in0(i_data2),
-      .i_in1(i_data1),
+      .i_in0(data2),
+      .i_in1(data1),
       .i_sel(i_mem_write),
       .o_out(memory_address)
   );
@@ -86,17 +84,17 @@ module exm_stage (
   mux_2x1 #(16) mux_alu_foward_1 (
       .i_in0(i_data1),
       .i_in1(i_data_wb),
-      .i_sel(1'b0),
-      .o_out(alu_input_1)
+      .i_sel(i_data1_forward),
+      .o_out(data1)
   );
   mux_2x1 #(16) mux_alu_foward_2 (
       .i_in0(i_data2),
       .i_in1(i_data_wb),
-      .i_sel(1'b0),
-      .o_out(forward_imm)
+      .i_sel(i_data2_forward),
+      .o_out(data2)
   );
   mux_2x1 #(16) mux_alu_foward_3 (
-      .i_in0(forward_imm),
+      .i_in0(data2),
       .i_in1(i_immediate),
       .i_sel(i_imm),
       .o_out(forward_imm_inc)
@@ -107,21 +105,25 @@ module exm_stage (
       .i_sel(i_inc_dec),
       .o_out(alu_input_2)
   );
-
+  wire carry_flag_r;
+  assign carry_flag_r = (i_change_carry) ? i_carry_value : carry_flag;
   flag_register fr (
       .i_clk          (i_clk),            //clock signal
       .i_rst          (i_reset),          // reset signal
       .i_zero_flag    (zero_flag),        // zero flag
       .i_negative_flag(negative_flag),    // negative flag
-      .i_carry_flag   (carry_flag),       // carry flag 
+      .i_carry_flag   (carry_flag_r),     // carry flag 
       .o_zero_flag    (o_zero_flag),      // zero flag
       .o_negative_flag(o_negative_flag),  // negative flag
       .o_carry_flag   (o_carry_flag)      // carry flag 
   );
   alu alu_unit (
-      .i_data_1       (alu_input_1),        // source
+      .i_data_1       (data1),              // source
       .i_data_2       (alu_input_2),        // destination
       .i_op           (i_alu_function),     // opcode 
+      .i_zero_flag    (o_zero_flag),        // zero flag
+      .i_negative_flag(o_negative_flag),    // negative flag
+      .i_carry_flag   (o_carry_flag),       // carry flag 
       .o_zero_flag    (zero_flag_alu),      // zero flag
       .o_negative_flag(negative_flag_alu),  // negative flag
       .o_carry_flag   (carry_flag_alu),     // carry flag 
@@ -151,18 +153,18 @@ module exm_stage (
   // Select data 2 instead of alu result if it is a mov instruction
   mux_2x1 #(16) ex_result (
       .i_in0(alu_result),
-      .i_in1(i_data2),
+      .i_in1(data2),
       .i_sel(i_mov),
       .o_out(o_ex_result)
   );
 
   // branch decision
-  assign branch_decision = (~i_branch_operation)? 1'b0 : (i_branch_selector == 2'b11)? 1'b1 :
+  assign o_branch_decision = (~i_branch_operation)? 1'b0 : (i_branch_selector == 2'b11)? 1'b1 :
     (i_branch_selector == 2'b10)? o_carry_flag :
     (i_branch_selector == 2'b01)? o_negative_flag :
     o_zero_flag;
 
-
+  assign o_pc_new = (o_branch_decision) ? {16'b0, data1} : 32'b0;
   // temp register
   always @(posedge i_clk) begin
     pc_temp <= o_memory_data;

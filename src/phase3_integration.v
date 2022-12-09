@@ -70,7 +70,7 @@ module phase_3 (
   // hazard unit
   wire hazard_flush_f_d;
   wire hazard_flush_d_exm;
-
+  wire hazard_branch_decision;
 
 
   // write back stage
@@ -90,6 +90,8 @@ module phase_3 (
       .i_intterup_signal(1'b0),
       .i_clk(i_clk),
       .i_reset(i_reset),
+      .i_pc_new(exm_pc_new),
+      .i_branch_decision(hazard_branch_decision),
       .o_instr(ftch_instr)
   );
 
@@ -187,15 +189,15 @@ module phase_3 (
   );
   assign exm_i_write_addr = exm_i_rd;
 
-  //   wire data1_forward, data2_forward;
-  //   forwarding_unit funit (
-  //       .i_rs(exm_i_rs),  // the data1 regeister
-  //       .i_rd(exm_i_rd),  // the data2 register
-  //       .i_rd_exmem(wb_i_wire_addr),  // the register we will write back into the next stage
-  //       .i_write_back_signal(wb_i_write_back),
-  //       .o_forward_slct_data1(data1_forward),  // A selector for the first mux before the alu
-  //       .o_forward_slct_data2(data2_forward)  // A selector for the second mux before the alu
-  //   );
+  wire data1_forward, data2_forward;
+  forwarding_unit funit (
+      .i_rs(exm_i_rs),  // the data1 regeister
+      .i_rd(exm_i_rd),  // the data2 register
+      .i_rd_exmem(wb_i_wire_addr),  // the register we will write back into the next stage
+      .i_write_back_signal(wb_i_write_back),
+      .o_forward_slct_data1(data1_forward),  // A selector for the first mux before the alu
+      .o_forward_slct_data2(data2_forward)  // A selector for the second mux before the alu
+  );
 
   exm_stage em (
       .i_clk(i_clk),
@@ -279,7 +281,7 @@ module phase_3 (
       .o_flush_f_d(hazard_flush_f_d),
       .o_flush_d_em(hazard_flush_d_exm),
       .o_stall_d_em(o_stall_d_em),
-      .o_branch_decision(o_branch_decision)
+      .o_branch_decision(hazard_branch_decision)
   );
 
 endmodule

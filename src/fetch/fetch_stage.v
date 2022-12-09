@@ -2,6 +2,8 @@ module fetch_stage (
     input i_intterup_signal,
     input i_clk,
     input i_reset,
+    input [31:0] i_pc_new,
+    input i_branch_decision,
     output [15:0] o_instr
 );
   wire [31:0] pc_in;
@@ -15,11 +17,11 @@ module fetch_stage (
       .i_data(pc_in),
       .o_data(pc_out)
   );
-  // phase 1 always increment
+
   mux_2x1 #(32) mux (
       pc_out + 1,
-      32'b0,
-      1'b0,
+      i_pc_new,
+      i_branch_decision,
       pc_in
   );
 

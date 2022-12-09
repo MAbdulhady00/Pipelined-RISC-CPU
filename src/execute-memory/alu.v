@@ -15,12 +15,18 @@ module alu (
     input      [15:0] i_data_1,         // source
     input      [15:0] i_data_2,         // destination
     input      [ 2:0] i_op,             // opcode 
+    input             i_zero_flag,      // zero flag
+    input             i_negative_flag,  // negative flag
+    input             i_carry_flag,     // carry flag 
     output reg        o_zero_flag,      // zero flag
     output reg        o_negative_flag,  // negative flag
     output reg        o_carry_flag,     // carry flag 
     output reg [15:0] o_result          // result
 );
   always @(*) begin
+    o_zero_flag = i_zero_flag;
+    o_negative_flag = i_negative_flag;
+    o_carry_flag = i_carry_flag;
     case (i_op)
       //NOP
       3'b000:  o_result <= ~i_data_1;

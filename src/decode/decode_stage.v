@@ -31,9 +31,9 @@ module decode_stage (
 );
 
   wire read1, read2;
-  
-  control_unit_phase_1 cu (
-      .i_op_code(i_instr[15:13]),
+
+  control_unit cu (
+      .i_op_code(i_instr[15:11]),
       .i_interrupt(i_interrupt),
       .o_alu_function(o_alu_function),
       .o_wb_selector(o_wb_selector),
@@ -71,7 +71,7 @@ module decode_stage (
       .o_data2(o_data2)
   );
 
-  assign o_rd = i_instr[12:10];
-  assign o_rs = i_instr[9:7];
+  assign o_rd = i_instr[10:8];
+  assign o_rs = i_instr[7:5];
 
 endmodule

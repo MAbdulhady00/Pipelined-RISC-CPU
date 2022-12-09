@@ -13,9 +13,9 @@ module forwarding_unit (
     output reg o_forward_slct_data2  // A selector for the second mux before the alu
 );
   always @(*) begin
-    if (i_write_back_signal && (i_rd_exmem === i_rs)) o_forward_slct_data1 = 1'b1;
+    if (i_write_back_signal && (i_rd_exmem === i_rd)) o_forward_slct_data1 = 1'b1;
     else o_forward_slct_data1 = 1'b0;
-    if (i_write_back_signal && (i_rd_exmem === i_rd)) o_forward_slct_data2 = 1'b1;
+    if (i_write_back_signal && (i_rd_exmem === i_rs)) o_forward_slct_data2 = 1'b1;
     else o_forward_slct_data2 = 1'b0;
   end
 endmodule
