@@ -14,7 +14,7 @@
   "dec": ["01111", "dst"], running
   "mov": ["01000", "dst", "src"], running
   "ldm": ["10010", "dst", "load"], running
-  "ldd": ["10011", "dst", "src"],
+  "ldd": ["10011", "dst", "src"], running
   "std": ["10000", "src", "dst"], running
   "push": ["10100", "dst"],
   "pop": ["10111", "dst"],

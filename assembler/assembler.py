@@ -14,6 +14,10 @@ def int_to_hex(num: int) -> str:
     return hex(num).lstrip('0x')
 
 
+def int_to_bin(num: int) -> str:
+    return bin(num).lstrip('0b')
+
+
 def parse_data(word: str):
     raw_num = word
     # parse hex number
@@ -103,7 +107,10 @@ def parse_instruction(words: list[str], isa: dict[str, list[str]]) -> list[str]:
             instr_binary[3] = parse_reg(words[idx + 1])
         elif action == 'sh':
             raw_num = parse_num(words[idx + 1])
-            instr_binary[4] = int_to_hex(int(raw_num, base=0))
+            num = int(raw_num, base=0)
+            if num > 0xFF:
+                raise SyntaxError('shift amount cannot be greater than 8 bits')
+            instr_binary[4] = f'{int_to_bin(num):0>8}'
         elif action == 'load':
             raw_num = parse_num(words[idx + 1])
             instr_str: str = ''.join(instr_binary)
