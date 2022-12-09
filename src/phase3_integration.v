@@ -1,4 +1,4 @@
-module phase_1 (
+module phase_3 (
     input i_clk,
     input i_reset
 );
@@ -37,12 +37,12 @@ module phase_1 (
   wire [15:0] exm_immediate;  // to write back buffer
   wire [15:0] exm_memory_data;  // Data read from the memory
   wire [15:0] exm_ex_result;
-  wire exm_zero_flag;  // zero flag
-  wire exm_negative_flag;  // negative flag
-  wire exm_carry_flag;  // carry flag 
   wire [1:0] exm_wb_selector;
   wire exm_write_back;
   wire [15:0] exm_port;
+  wire exm_branch_decision;
+  wire [31:0] exm_pc_new;
+
   wire [2:0] exm_i_write_addr;
   wire [2:0] exm_i_alu_function;
   wire [1:0] exm_i_wb_selector;
@@ -66,6 +66,13 @@ module phase_1 (
   wire [15:0] exm_i_data2;
   wire [2:0] exm_i_rd;
   wire [2:0] exm_i_rs;
+
+  // hazard unit
+  wire hazard_flush_f_d;
+  wire hazard_flush_d_exm;
+
+
+
   // write back stage
   wire [1:0] wb_i_wb_selector;
   wire wb_i_write_back;
@@ -86,9 +93,11 @@ module phase_1 (
       .o_instr(ftch_instr)
   );
 
+  wire reset_f_d;
+  assign reset_f_d = i_reset | hazard_flush_f_d;
   fetch_decode_buffer ftch_decode_buff (
       .i_clk  (i_clk),
-      .i_reset(i_reset),
+      .i_reset(reset_f_d),
       .i_instr(ftch_instr),
       .o_instr(decode_instr)
   );
@@ -125,11 +134,11 @@ module phase_1 (
       .o_rs(decode_rs)
   );
 
-  wire ldm;
-  assign ldm = i_reset | exm_i_imm;
+  wire reset_d_e;
+  assign reset_d_e = i_reset | exm_i_imm | hazard_flush_d_exm;
   decode_exm_buffer decode_exm_buff (
       .i_clk(i_clk),
-      .i_reset(ldm),
+      .i_reset(reset_d_e),
       .i_alu_function(decode_alu_function),
       .i_wb_selector(decode_wb_selector),
       .i_branch_selector(decode_branch_selector),
@@ -178,15 +187,15 @@ module phase_1 (
   );
   assign exm_i_write_addr = exm_i_rd;
 
-  wire data1_forward, data2_forward;
-  forwarding_unit funit (
-      .i_rs(exm_i_rs),  // the data1 regeister
-      .i_rd(exm_i_rd),  // the data2 register
-      .i_rd_exmem(wb_i_wire_addr),  // the register we will write back into the next stage
-      .i_write_back_signal(wb_i_write_back),
-      .o_forward_slct_data1(data1_forward),  // A selector for the first mux before the alu
-      .o_forward_slct_data2(data2_forward)  // A selector for the second mux before the alu
-  );
+  //   wire data1_forward, data2_forward;
+  //   forwarding_unit funit (
+  //       .i_rs(exm_i_rs),  // the data1 regeister
+  //       .i_rd(exm_i_rd),  // the data2 register
+  //       .i_rd_exmem(wb_i_wire_addr),  // the register we will write back into the next stage
+  //       .i_write_back_signal(wb_i_write_back),
+  //       .o_forward_slct_data1(data1_forward),  // A selector for the first mux before the alu
+  //       .o_forward_slct_data2(data2_forward)  // A selector for the second mux before the alu
+  //   );
 
   exm_stage em (
       .i_clk(i_clk),
@@ -222,11 +231,10 @@ module phase_1 (
       .o_immediate(exm_immediate),  // to write back buffer
       .o_memory_data(exm_memory_data),  // Data read from the memory
       .o_ex_result(exm_ex_result),
-      .o_zero_flag(exm_zero_flag),  // zero flag
-      .o_negative_flag(exm_zero_flag),  // negative flag
-      .o_carry_flag(exm_carry_flag),  // carry flag 
       .o_wb_selector(exm_wb_selector),
-      .o_write_back(exm_write_back)
+      .o_write_back(exm_write_back),
+      .o_branch_decision(exm_branch_decision),
+      .o_pc_new(exm_pc_new)
   );
 
   exm_write_back_buffer exm_wb_buff (
@@ -261,6 +269,17 @@ module phase_1 (
       .o_write_data(wb_write_data),
       .o_write_addr(wb_write_addr),
       .o_write_back(wb_write_back)
+  );
+
+  hazard_unit hazard_unit (
+      .i_clk(i_clk),
+      .i_push_pc(exm_i_push_pc),
+      .i_pop_pc(exm_i_pop_pc),
+      .i_branch_decision(exm_branch_decision),
+      .o_flush_f_d(hazard_flush_f_d),
+      .o_flush_d_em(hazard_flush_d_exm),
+      .o_stall_d_em(o_stall_d_em),
+      .o_branch_decision(o_branch_decision)
   );
 
 endmodule
