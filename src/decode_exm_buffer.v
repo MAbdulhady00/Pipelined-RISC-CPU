@@ -17,7 +17,7 @@ module decode_exm_buffer (
     input i_branch_operation,
     input i_imm,
     input i_shamt,
-    input i_input_port,
+    input i_output_port,
     input i_pop_pc,
     input i_push_pc,
     input i_branch_flags,
@@ -26,7 +26,6 @@ module decode_exm_buffer (
     input [15:0] i_data2,
     input [2:0] i_rd,
     input [2:0] i_rs,
-    output reg o_input_port,
     output reg [2:0] o_alu_function,
     output reg [1:0] o_wb_selector,
     output reg [2:0] o_branch_selector,
@@ -69,7 +68,7 @@ module decode_exm_buffer (
       o_branch_operation <= 1'b0;
       o_imm <= 1'b0;
       o_shamt <= 1'b0;
-      o_input_port <= 1'b0;
+      o_output_port <= 1'b0;
       o_pop_pc <= 1'b0;
       o_push_pc <= 1'b0;
       o_branch_flags <= 1'b0;
@@ -94,7 +93,7 @@ module decode_exm_buffer (
       o_branch_operation <= i_branch_operation;
       o_imm <= i_imm;
       o_shamt <= i_shamt;
-      o_input_port <= i_input_port;
+      o_output_port <= i_output_port;
       o_pop_pc <= i_pop_pc;
       o_push_pc <= i_push_pc;
       o_branch_flags <= i_branch_flags;

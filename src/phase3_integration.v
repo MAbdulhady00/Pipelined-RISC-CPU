@@ -1,6 +1,8 @@
 module phase_3 (
     input i_clk,
-    input i_reset
+    input i_reset,
+    input [15:0] i_input_port,
+    output [15:0] o_output_port
 );
   // fetch stage
   wire [15:0] ftch_instr;
@@ -10,7 +12,6 @@ module phase_3 (
   wire [2:0] decode_alu_function;
   wire [1:0] decode_wb_selector;
   wire [2:0] decode_branch_selector;
-  wire decode_input_port;
   wire decode_mov;
   wire decode_write_back;
   wire decode_inc_dec;
@@ -41,7 +42,6 @@ module phase_3 (
   wire [15:0] exm_ex_result;
   wire [1:0] exm_wb_selector;
   wire exm_write_back;
-  wire [15:0] exm_port;
   wire exm_branch_decision;
   wire [31:0] exm_pc_new;
 
@@ -162,7 +162,6 @@ module phase_3 (
       .i_branch_operation(decode_branch_operation),
       .i_imm(decode_imm),
       .i_shamt(decode_shamt),
-      .i_input_port(1'b0),
       .i_pop_pc(decode_pop_pc),
       .i_push_pc(decode_push_pc),
       .i_branch_flags(decode_branch_flags),
@@ -171,7 +170,7 @@ module phase_3 (
       .i_data2(decode_data2),
       .i_rd(decode_rd),
       .i_rs(decode_rs),
-      .o_input_port(decode_input_port),
+      .i_output_port(decode_output_port),
       .o_alu_function(exm_i_alu_function),
       .o_wb_selector(exm_i_wb_selector),
       .o_branch_selector(exm_i_branch_selector),
@@ -227,7 +226,7 @@ module phase_3 (
       .i_branch_operation(exm_i_branch_operation),
       .i_imm(exm_i_imm),
       .i_shamt(exm_i_shamt),
-      .i_input_port(1'b0),
+      .i_output_port(exm_i_output_port),
       .i_pop_pc(exm_i_pop_pc),
       .i_push_pc(exm_i_push_pc),
       .i_branch_flags(exm_i_branch_flags),
@@ -248,7 +247,8 @@ module phase_3 (
       .o_wb_selector(exm_wb_selector),
       .o_write_back(exm_write_back),
       .o_branch_decision(exm_branch_decision),
-      .o_pc_new(exm_pc_new)
+      .o_pc_new(exm_pc_new),
+      .o_output_port(o_output_port)
   );
 
   exm_write_back_buffer exm_wb_buff (
@@ -257,7 +257,7 @@ module phase_3 (
       .i_ex_result(exm_ex_result),
       .i_memory_data(exm_memory_data),
       .i_immediate(exm_immediate),
-      .i_port(exm_port),
+      .i_port(i_input_port),
       .i_wb_selector(exm_wb_selector),
       .i_write_back(exm_write_back),
       .i_write_addr(exm_write_addr),

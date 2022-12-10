@@ -15,6 +15,7 @@ add wave -position insertpoint  {sim:/phase_3/ds/rf/genblk1[1]/r/o_data}
 add wave -position insertpoint  {sim:/phase_3/ds/rf/genblk1[0]/r/o_data}
 force -freeze sim:/phase_3/i_clk 1 0, 0 {50 ps} -r 100
 force -freeze sim:/phase_3/i_reset 1 0
+force -freeze sim:/phase_3/i_input_port 0000000000000101 0
 run 125
 force -freeze sim:/phase_3/i_reset 0 0
 run 75

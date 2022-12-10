@@ -16,7 +16,7 @@ module exm_stage (
     input         i_branch_operation,
     input         i_imm,
     input         i_shamt,
-    input         i_input_port,
+    input         i_output_port,
     input         i_pop_pc,
     input         i_push_pc,
     input         i_branch_flags,
@@ -35,6 +35,7 @@ module exm_stage (
     output [15:0] o_immediate,         // to write back buffer
     output [15:0] o_memory_data,       // Data read from the memory
     output [15:0] o_ex_result,
+    output [15:0] o_output_port,
     output [ 1:0] o_wb_selector,
     output        o_write_back,
     output        o_branch_decision,
@@ -59,6 +60,7 @@ module exm_stage (
   assign o_wb_selector = i_wb_selector;
   assign o_write_back  = i_write_back;
   assign o_write_addr  = i_write_addr;
+  assign o_output_port = (i_output_port)? data1 : 16'bz;
 
   mux_2x1 #(16) mux_memory_1 (
       .i_in0(data2),
