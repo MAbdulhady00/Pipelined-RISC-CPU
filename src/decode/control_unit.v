@@ -15,6 +15,7 @@ module control_unit (
     output reg o_stack_function,
     output reg o_branch_operation,
     output reg o_imm,
+    output reg o_shamt,
     output reg o_output_port,
     output reg o_pop_pc,
     output reg o_push_pc,
@@ -39,6 +40,7 @@ module control_unit (
     o_branch_operation = 1'b0;
     o_branch_selector = 1'b0;
     o_imm = 1'b0;
+    o_shamt = 1'b0;
     o_output_port = 1'b0;
     o_pop_pc = 1'b0;
     o_push_pc = 1'b0;
@@ -180,13 +182,13 @@ module control_unit (
       5'b11110: begin  // SHL
         o_write_back = 1'b1;
         // o_wb_selector = 2'b00;
-        o_imm = 1'b1;
+        o_shamt = 1'b1;
         o_alu_function = 3'b110;
       end
       5'b11111: begin  // SHR
         o_write_back = 1'b1;
         // o_wb_selector = 2'b00;
-        o_imm = 1'b1;
+        o_shamt = 1'b1;
         o_alu_function = 3'b111;
       end
     endcase

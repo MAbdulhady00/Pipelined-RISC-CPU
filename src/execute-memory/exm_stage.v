@@ -15,6 +15,7 @@ module exm_stage (
     input         i_stack_function,
     input         i_branch_operation,
     input         i_imm,
+    input         i_shamt,
     input         i_input_port,
     input         i_pop_pc,
     input         i_push_pc,
@@ -28,6 +29,7 @@ module exm_stage (
     input         i_data1_forward,     // from the fowrading unit if data1 should be fowraded 
     input         i_data2_forward,     // from the fowrading unit if data2 should be fowraded
     input  [15:0] i_immediate,         // instruction data from decode stage
+    input  [15:0] i_sh_amount,
     input  [ 2:0] i_write_addr,
     output [ 2:0] o_write_addr,
     output [15:0] o_immediate,         // to write back buffer
@@ -51,6 +53,7 @@ module exm_stage (
   wire [15:0] forward_imm_inc;
   reg  [15:0] pc_temp;
   wire [15:0] data1, data2, alu_input_2;
+  wire [15:0] imm_data;
 
   assign o_immediate   = i_immediate;
   assign o_wb_selector = i_wb_selector;
@@ -93,10 +96,18 @@ module exm_stage (
       .i_sel(i_data2_forward),
       .o_out(data2)
   );
+
+  mux_2x1 #(16) mux_alu_foward_3_1 (
+      .i_in0(i_immediate),
+      .i_in1(i_sh_amount),
+      .i_sel(i_shamt),
+      .o_out(imm_data)
+  );
+  
   mux_2x1 #(16) mux_alu_foward_3 (
       .i_in0(data2),
-      .i_in1(i_immediate),
-      .i_sel(i_imm),
+      .i_in1(imm_data),
+      .i_sel(i_imm | i_shamt),
       .o_out(forward_imm_inc)
   );
   mux_2x1 #(16) mux_alu_foward_4 (

@@ -22,8 +22,8 @@
   "jn": running
   "jc": running
   "jmp": running
-  "shl": not yet
-  "shr": not yet
+  "shl": running
+  "shr": running
   "in": not yet
   "out": not yet
 }

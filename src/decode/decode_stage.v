@@ -20,10 +20,12 @@ module decode_stage (
     output o_stack_function,
     output o_branch_operation,
     output o_imm,
+    output o_shamt,
     output o_output_port,
     output o_pop_pc,
     output o_push_pc,
     output o_branch_flags,
+    output [15:0] o_sh_amount,
     output [15:0] o_data1,
     output [15:0] o_data2,
     output [2:0] o_rd,
@@ -31,7 +33,7 @@ module decode_stage (
 );
 
   wire read1, read2;
-
+  assign o_sh_amount = {{8{1'b0}}, i_instr[7:0]};  
   control_unit cu (
       .i_op_code(i_instr[15:11]),
       .i_interrupt(i_interrupt),
@@ -49,6 +51,7 @@ module decode_stage (
       .o_stack_function(o_stack_function),
       .o_branch_operation(o_branch_operation),
       .o_imm(o_imm),
+      .o_shamt(o_shamt),
       .o_output_port(o_output_port),
       .o_pop_pc(o_pop_pc),
       .o_push_pc(o_push_pc),

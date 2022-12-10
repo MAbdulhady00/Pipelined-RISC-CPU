@@ -22,10 +22,12 @@ module phase_3 (
   wire decode_stack_function;
   wire decode_branch_operation;
   wire decode_imm;
+  wire decode_shamt;
   wire decode_output_port;
   wire decode_pop_pc;
   wire decode_push_pc;
   wire decode_branch_flags;
+  wire [15:0] decode_sh_amount;
   wire [15:0] decode_data1;
   wire [15:0] decode_data2;
   wire [2:0] decode_rd;
@@ -58,10 +60,12 @@ module phase_3 (
   wire exm_i_stack_function;
   wire exm_i_branch_operation;
   wire exm_i_imm;
+  wire exm_i_shamt;
   wire exm_i_output_port;
   wire exm_i_pop_pc;
   wire exm_i_push_pc;
   wire exm_i_branch_flags;
+  wire [15:0] exm_i_sh_amount;
   wire [15:0] exm_i_data1;
   wire [15:0] exm_i_data2;
   wire [2:0] exm_i_rd;
@@ -126,10 +130,12 @@ module phase_3 (
       .o_stack_function(decode_stack_function),
       .o_branch_operation(decode_branch_operation),
       .o_imm(decode_imm),
+      .o_shamt(decode_shamt),
       .o_output_port(decode_output_port),
       .o_pop_pc(decode_pop_pc),
       .o_push_pc(decode_push_pc),
       .o_branch_flags(decode_branch_flags),
+      .o_sh_amount(decode_sh_amount),
       .o_data1(decode_data1),
       .o_data2(decode_data2),
       .o_rd(decode_rd),
@@ -155,10 +161,12 @@ module phase_3 (
       .i_stack_function(decode_stack_function),
       .i_branch_operation(decode_branch_operation),
       .i_imm(decode_imm),
+      .i_shamt(decode_shamt),
       .i_input_port(1'b0),
       .i_pop_pc(decode_pop_pc),
       .i_push_pc(decode_push_pc),
       .i_branch_flags(decode_branch_flags),
+      .i_sh_amount(decode_sh_amount),
       .i_data1(decode_data1),
       .i_data2(decode_data2),
       .i_rd(decode_rd),
@@ -178,10 +186,12 @@ module phase_3 (
       .o_stack_function(exm_i_stack_function),
       .o_branch_operation(exm_i_branch_operation),
       .o_imm(exm_i_imm),
+      .o_shamt(exm_i_shamt),
       .o_output_port(exm_i_output_port),
       .o_pop_pc(exm_i_pop_pc),
       .o_push_pc(exm_i_push_pc),
       .o_branch_flags(exm_i_branch_flags),
+      .o_sh_amount(exm_i_sh_amount),
       .o_data1(exm_i_data1),
       .o_data2(exm_i_data2),
       .o_rd(exm_i_rd),
@@ -216,6 +226,7 @@ module phase_3 (
       .i_stack_function(exm_i_stack_function),
       .i_branch_operation(exm_i_branch_operation),
       .i_imm(exm_i_imm),
+      .i_shamt(exm_i_shamt),
       .i_input_port(1'b0),
       .i_pop_pc(exm_i_pop_pc),
       .i_push_pc(exm_i_push_pc),
@@ -225,6 +236,7 @@ module phase_3 (
       .i_rd(exm_i_rd),
       .i_rs(exm_i_rs),
       .i_data_wb(wb_write_data),  // actual result data coming from the write back stage
+      .i_sh_amount(exm_i_sh_amount), // shift amount from instruction bits
       .i_data1_forward(data1_forward),  // from the fowrading unit if data1 should be fowraded 
       .i_data2_forward(data2_forward),  // from the fowrading unit if data2 should be fowraded
       .i_immediate(decode_instr),  // instruction data from decode stage
