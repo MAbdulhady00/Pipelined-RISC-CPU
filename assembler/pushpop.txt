@@ -1,0 +1,7 @@
+.code
+ldm r0, 6
+push r0
+ldm r1, 7
+push r1
+pop r3 ; should have 7
+pop r4 ; should have 6

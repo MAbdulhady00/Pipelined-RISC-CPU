@@ -16,14 +16,14 @@
   "ldm": running
   "ldd": running
   "std": running
-  "push": not yet
-  "pop": not yet
+  "push": running
+  "pop": running
   "jz": running
   "jn": running
   "jc": running
   "jmp": running
   "shl": running
   "shr": running
-  "in": not yet
-  "out": not yet
+  "in": running
+  "out": running
 }

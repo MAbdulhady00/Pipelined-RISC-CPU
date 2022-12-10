@@ -1,0 +1,12 @@
+; NOT WORKING
+.code
+LDM R3,4
+LDM R7,29h
+LDM R6,ffh
+LDM R1,5
+      LDD R1,R2
+      ADD R3,R2
+      STD R2,R1
+      DEC R1
+      JZ R6
+      JMP R7 
