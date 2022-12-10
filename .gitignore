@@ -2,3 +2,5 @@ work
 *.mti
 *.mpf
 *.wlf
+*_code.txt
+*_data.txt

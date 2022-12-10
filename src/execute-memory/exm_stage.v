@@ -12,7 +12,7 @@ module exm_stage (
     input         i_mem_read,
     input         i_mem_write,
     input         i_stack_operation,
-    input         i_stack_function,
+    input         i_stack_function,    // 1 for push, 0 for pop
     input         i_branch_operation,
     input         i_imm,
     input         i_shamt,
@@ -42,6 +42,7 @@ module exm_stage (
     output [31:0] o_pc_new
 );
   wire [15:0] memory_address;
+  wire [15:0] memory_data_stack_address;
   wire [15:0] memory_write_data;
   wire [15:0] alu_result;
   wire        zero_flag_alu;  // alu res zero flag
@@ -53,14 +54,37 @@ module exm_stage (
   wire [15:0] forward_imm;
   wire [15:0] forward_imm_inc;
   reg  [15:0] pc_temp;
+  reg  [15:0] stack_temp;
   wire [15:0] data1, data2, alu_input_2;
   wire [15:0] imm_data;
-
+  wire [31:0] stack_pointer_old;
+  reg  [31:0] stack_pointer_new;
   assign o_immediate   = i_immediate;
   assign o_wb_selector = i_wb_selector;
   assign o_write_back  = i_write_back;
   assign o_write_addr  = i_write_addr;
-  assign o_output_port = (i_output_port)? data1 : 16'bz;
+  assign o_output_port = (i_output_port) ? data1 : 16'bz;
+
+  // ========= stack =========
+  stack_pointer stack (
+      .i_reset(i_reset),
+      .i_clk(i_clk),
+      .i_stack_operation(i_stack_operation),  // enable
+      .i_stack_pointer(stack_pointer_new),
+      .o_stack_pointer(stack_pointer_old)
+  );
+  // latch old stack before negative clock cycle
+  always @(*) begin
+    if (i_stack_operation) begin
+      if (i_stack_function) begin  // PUSH
+        if (i_clk) stack_temp = stack_pointer_old;  // Write In (Stack Pointer) Location
+        stack_pointer_new = stack_pointer_old - 1'b1;
+      end else begin  // POP
+        stack_pointer_new = stack_pointer_old + 1'b1;
+        if (i_clk) stack_temp = stack_pointer_new;  // Read From (Stack Pointer - 1) Location
+      end
+    end
+  end
 
   mux_2x1 #(16) mux_memory_1 (
       .i_in0(data2),
@@ -69,10 +93,18 @@ module exm_stage (
       .o_out(memory_write_data)
   );
 
+
   mux_2x1 #(16) mux_memory_2 (
       .i_in0(data2),
       .i_in1(data1),
       .i_sel(i_mem_write),
+      .o_out(memory_data_stack_address)
+  );
+
+  mux_2x1 #(16) mux_memory_3 (
+      .i_in0(memory_data_stack_address),
+      .i_in1(stack_temp[15:0]),
+      .i_sel(i_stack_operation),
       .o_out(memory_address)
   );
 
@@ -105,7 +137,7 @@ module exm_stage (
       .i_sel(i_shamt),
       .o_out(imm_data)
   );
-  
+
   mux_2x1 #(16) mux_alu_foward_3 (
       .i_in0(data2),
       .i_in1(imm_data),
