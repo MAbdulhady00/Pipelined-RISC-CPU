@@ -57,7 +57,7 @@ module control_unit (
       5'b00010: begin  // RET
         o_mem_read = 1'b1;
         o_pop_pc = 1'b1;
-        o_stack_function = 1'b1;
+        // o_stack_function = 1'b0;
         o_stack_operation = 1'b1;
       end
       5'b00011: begin  // RTI

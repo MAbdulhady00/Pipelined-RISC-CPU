@@ -1,0 +1,27 @@
+.code
+
+ldm r0, 0
+ldm r1, 6
+ldm r3, 0
+
+; address
+ldm r5, 53
+ldm r6, 50
+ldm r7, 47
+
+call r7
+
+std r0, r3 ; after recursion expect mem[0] == 15
+jmp r5
+
+; r7 base case
+dec r1
+jz r6
+ret
+
+; r6 recursion
+add r0, r1
+call r7
+ret
+
+; r5 end of program

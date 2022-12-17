@@ -20,15 +20,22 @@ module hazard_unit (
       o_flush_d_em = 1'b1;
       o_branch_decision = 1'b1;
     end
-    if (i_push_pc & !o_state) begin
+
+    if ((i_push_pc | i_pop_pc) & !o_state) begin  // call & ret
       o_stall_d_em = 1'b1;
       o_flush_d_em = 1'b0;
+    end
+
+    if (i_pop_pc & o_state) begin  // ret
+      o_stall_d_em = 1'b0;
+      o_flush_d_em = 1'b1;
+      o_branch_decision = 1'b1;
     end
   end
 
   always @(posedge i_clk) begin
     o_state <= 1'b0;
-    if (i_push_pc & !o_state) begin
+    if ((i_push_pc | i_pop_pc) & !o_state) begin
       o_state <= 1'b1;
     end
   end

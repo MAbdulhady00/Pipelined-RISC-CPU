@@ -51,6 +51,7 @@ module exm_stage (
   wire [15:0] pc_high;
   wire [15:0] pc_low;
   wire [15:0] alu_result;
+  wire [31:0] branched_pc;
   wire        zero_flag_alu;  // alu res zero flag
   wire        negative_flag_alu;  // alu res negative flag
   wire        carry_flag_alu;  // alu res carry flag 
@@ -153,20 +154,20 @@ module exm_stage (
   // select flags
   mux_2x1 flag_select_1 (
       .i_in0(zero_flag_alu),
-      .i_in1(pc_temp[15]),
-      .i_sel(i_branch_flags),
+      .i_in1(o_memory_data[15]),
+      .i_sel(i_branch_flags & i_pop_pc & i_hazard_state),
       .o_out(zero_flag)
   );
   mux_2x1 flag_select_2 (
       .i_in0(negative_flag_alu),
-      .i_in1(pc_temp[14]),
-      .i_sel(i_branch_flags),
+      .i_in1(o_memory_data[14]),
+      .i_sel(i_branch_flags & i_pop_pc & i_hazard_state),
       .o_out(negative_flag)
   );
   mux_2x1 flag_select_3 (
       .i_in0(carry_flag_alu),
-      .i_in1(pc_temp[13]),
-      .i_sel(i_branch_flags),
+      .i_in1(o_memory_data[13]),
+      .i_sel(i_branch_flags & i_pop_pc & i_hazard_state),
       .o_out(carry_flag)
   );
 
@@ -184,17 +185,25 @@ module exm_stage (
     (i_branch_selector == 2'b01)? o_negative_flag :
     o_zero_flag;
 
-  assign o_pc_new = (o_branch_decision) ? {16'b0, data1} : 32'b0;
 
-  // temp register
-  always @(posedge i_clk) begin
-    pc_temp <= o_memory_data;
-  end
+  mux_2x1 #(32) mux_pc_new_1 (
+      .i_in0(32'b0),
+      .i_in1({16'b0, data1}),
+      .i_sel(o_branch_decision),
+      .o_out(branched_pc)
+  );
+
+  mux_2x1 #(32) mux_pc_new_2 (
+      .i_in0(branched_pc),
+      .i_in1({3'b0, o_memory_data[12:0], pc_temp}),
+      .i_sel(i_pop_pc & i_hazard_state),
+      .o_out(o_pc_new)
+  );
 
   // PC input
 
   mux_2x1 #(3) mux_pc_1 (
-      .i_in0({o_carry_flag, o_negative_flag, o_zero_flag}),
+      .i_in0({o_zero_flag, o_negative_flag, o_carry_flag}),
       .i_in1(i_pc[31:29]),
       .i_sel(i_branch_flags),
       .o_out(upper_3bits_pc)
@@ -246,5 +255,10 @@ module exm_stage (
       .i_clk(i_clk),
       .o_read_data(o_memory_data)
   );
+
+  // temp register
+  always @(posedge i_clk) begin
+    if (i_pop_pc) pc_temp <= o_memory_data;
+  end
 
 endmodule
