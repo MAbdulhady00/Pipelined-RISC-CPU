@@ -74,6 +74,8 @@ module control_unit (
         o_stack_function = 1'b1;
         o_stack_operation = 1'b1;
         o_branch_flags = i_interrupt;
+        o_branch_operation = 1'b1;
+        o_branch_selector = 2'b11;  // jump unconditionally to register
       end
       5'b00110: begin  // CLRC
         o_change_carry = 1'b1;

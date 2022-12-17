@@ -1,0 +1,11 @@
+.code
+
+ldm r7, 0
+ldm r0, 40
+call r0
+; skip
+inc r7
+inc r7
+add r7, r7
+; r0
+inc r7 ; expect r7 == 1

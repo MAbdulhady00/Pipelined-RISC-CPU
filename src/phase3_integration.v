@@ -6,9 +6,11 @@ module phase_3 (
 );
   // fetch stage
   wire [15:0] ftch_instr;
+  wire [31:0] ftch_pc;
 
   // decode stage
   wire [15:0] decode_instr;
+  wire [31:0] decode_i_pc, decode_pc;
   wire [2:0] decode_alu_function;
   wire [1:0] decode_wb_selector;
   wire [2:0] decode_branch_selector;
@@ -70,11 +72,14 @@ module phase_3 (
   wire [15:0] exm_i_data2;
   wire [2:0] exm_i_rd;
   wire [2:0] exm_i_rs;
+  wire [31:0] exm_i_pc;
 
   // hazard unit
   wire hazard_flush_f_d;
   wire hazard_flush_d_exm;
+  wire hazard_stall_d_exm;
   wire hazard_branch_decision;
+  wire hazard_state;
 
 
   // write back stage
@@ -96,15 +101,18 @@ module phase_3 (
       .i_reset(i_reset),
       .i_pc_new(exm_pc_new),
       .i_branch_decision(hazard_branch_decision),
-      .o_instr(ftch_instr)
+      .o_instr(ftch_instr),
+      .o_pc_inc(ftch_pc)
   );
 
   wire reset_f_d;
   assign reset_f_d = i_reset | hazard_flush_f_d;
   fetch_decode_buffer ftch_decode_buff (
-      .i_clk  (i_clk),
+      .i_clk(i_clk),
       .i_reset(reset_f_d),
       .i_instr(ftch_instr),
+      .i_pc(ftch_pc),
+      .o_pc(decode_i_pc),
       .o_instr(decode_instr)
   );
 
@@ -116,6 +124,7 @@ module phase_3 (
       .i_write_back(wb_write_back),
       .i_write_addr(wb_write_addr),
       .i_write_data(wb_write_data),
+      .i_pc(decode_i_pc),
       .o_alu_function(decode_alu_function),
       .o_wb_selector(decode_wb_selector),
       .o_branch_selector(decode_branch_selector),
@@ -139,7 +148,8 @@ module phase_3 (
       .o_data1(decode_data1),
       .o_data2(decode_data2),
       .o_rd(decode_rd),
-      .o_rs(decode_rs)
+      .o_rs(decode_rs),
+      .o_pc(decode_pc)
   );
 
   wire reset_d_e;
@@ -147,6 +157,8 @@ module phase_3 (
   decode_exm_buffer decode_exm_buff (
       .i_clk(i_clk),
       .i_reset(reset_d_e),
+      .i_enable(~hazard_stall_d_exm),
+      .i_pc(decode_pc),
       .i_alu_function(decode_alu_function),
       .i_wb_selector(decode_wb_selector),
       .i_branch_selector(decode_branch_selector),
@@ -194,7 +206,8 @@ module phase_3 (
       .o_data1(exm_i_data1),
       .o_data2(exm_i_data2),
       .o_rd(exm_i_rd),
-      .o_rs(exm_i_rs)
+      .o_rs(exm_i_rs),
+      .o_pc(exm_i_pc)
   );
   assign exm_i_write_addr = exm_i_rd;
 
@@ -235,11 +248,13 @@ module phase_3 (
       .i_rd(exm_i_rd),
       .i_rs(exm_i_rs),
       .i_data_wb(wb_write_data),  // actual result data coming from the write back stage
-      .i_sh_amount(exm_i_sh_amount), // shift amount from instruction bits
+      .i_sh_amount(exm_i_sh_amount),  // shift amount from instruction bits
       .i_data1_forward(data1_forward),  // from the fowrading unit if data1 should be fowraded 
       .i_data2_forward(data2_forward),  // from the fowrading unit if data2 should be fowraded
       .i_immediate(decode_instr),  // instruction data from decode stage
       .i_write_addr(exm_i_write_addr),
+      .i_hazard_state(hazard_state),
+      .i_pc(exm_i_pc),
       .o_write_addr(exm_write_addr),
       .o_immediate(exm_immediate),  // to write back buffer
       .o_memory_data(exm_memory_data),  // Data read from the memory
@@ -292,8 +307,9 @@ module phase_3 (
       .i_branch_decision(exm_branch_decision),
       .o_flush_f_d(hazard_flush_f_d),
       .o_flush_d_em(hazard_flush_d_exm),
-      .o_stall_d_em(o_stall_d_em),
-      .o_branch_decision(hazard_branch_decision)
+      .o_stall_d_em(hazard_stall_d_exm),
+      .o_branch_decision(hazard_branch_decision),
+      .o_state(hazard_state)
   );
 
 endmodule

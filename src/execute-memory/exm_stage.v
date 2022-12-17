@@ -24,13 +24,14 @@ module exm_stage (
     input  [15:0] i_data2,
     input  [ 2:0] i_rd,
     input  [ 2:0] i_rs,
-    // input  [31:0] i_pc,
+    input  [31:0] i_pc,
     input  [15:0] i_data_wb,           // actual result data coming from the write back stage
     input         i_data1_forward,     // from the fowrading unit if data1 should be fowraded 
     input         i_data2_forward,     // from the fowrading unit if data2 should be fowraded
     input  [15:0] i_immediate,         // instruction data from decode stage
     input  [15:0] i_sh_amount,
     input  [ 2:0] i_write_addr,
+    input         i_hazard_state,
     output [ 2:0] o_write_addr,
     output [15:0] o_immediate,         // to write back buffer
     output [15:0] o_memory_data,       // Data read from the memory
@@ -43,7 +44,12 @@ module exm_stage (
 );
   wire [15:0] memory_address;
   wire [15:0] memory_data_stack_address;
+  wire [15:0] memory_selected;
   wire [15:0] memory_write_data;
+  wire [15:0] memory_pc;
+  wire [ 2:0] upper_3bits_pc;
+  wire [15:0] pc_high;
+  wire [15:0] pc_low;
   wire [15:0] alu_result;
   wire        zero_flag_alu;  // alu res zero flag
   wire        negative_flag_alu;  // alu res negative flag
@@ -85,37 +91,6 @@ module exm_stage (
       end
     end
   end
-
-  mux_2x1 #(16) mux_memory_1 (
-      .i_in0(data2),
-      .i_in1(data1),
-      .i_sel(i_stack_operation),
-      .o_out(memory_write_data)
-  );
-
-
-  mux_2x1 #(16) mux_memory_2 (
-      .i_in0(data2),
-      .i_in1(data1),
-      .i_sel(i_mem_write),
-      .o_out(memory_data_stack_address)
-  );
-
-  mux_2x1 #(16) mux_memory_3 (
-      .i_in0(memory_data_stack_address),
-      .i_in1(stack_temp[15:0]),
-      .i_sel(i_stack_operation),
-      .o_out(memory_address)
-  );
-
-  data_memory dm (
-      .i_address(memory_address),
-      .i_write_data(memory_write_data),
-      .i_memory_read(i_mem_read),
-      .i_memory_write(i_mem_write),
-      .i_clk(i_clk),
-      .o_read_data(o_memory_data)
-  );
 
   //=-=-=-=-=-==-=-=-= ALU + Fowarding =-=-=-=-=-==-=-=-=
   mux_2x1 #(16) mux_alu_foward_1 (
@@ -204,15 +179,72 @@ module exm_stage (
   );
 
   // branch decision
-  assign o_branch_decision = (~i_branch_operation)? 1'b0 : (i_branch_selector == 2'b11)? 1'b1 :
+  assign o_branch_decision = (~i_hazard_state & ~i_branch_operation)? 1'b0 : (i_branch_selector == 2'b11)? 1'b1 :
     (i_branch_selector == 2'b10)? o_carry_flag :
     (i_branch_selector == 2'b01)? o_negative_flag :
     o_zero_flag;
 
   assign o_pc_new = (o_branch_decision) ? {16'b0, data1} : 32'b0;
+
   // temp register
   always @(posedge i_clk) begin
     pc_temp <= o_memory_data;
   end
+
+  // PC input
+
+  mux_2x1 #(3) mux_pc_1 (
+      .i_in0({o_carry_flag, o_negative_flag, o_zero_flag}),
+      .i_in1(i_pc[31:29]),
+      .i_sel(i_branch_flags),
+      .o_out(upper_3bits_pc)
+  );
+
+  assign pc_high = {upper_3bits_pc, i_pc[28:16]};
+  assign pc_low  = i_pc[15:0];
+
+  mux_2x1 #(16) mux_memory_1 (
+      .i_in0(data2),
+      .i_in1(data1),
+      .i_sel(i_mem_write),
+      .o_out(memory_data_stack_address)
+  );
+
+  mux_2x1 #(16) mux_memory_2 (
+      .i_in0(memory_data_stack_address),
+      .i_in1(stack_temp[15:0]),
+      .i_sel(i_stack_operation),
+      .o_out(memory_address)
+  );
+
+  mux_2x1 #(16) mux_memory_3 (
+      .i_in0(data2),
+      .i_in1(data1),
+      .i_sel(i_stack_operation),
+      .o_out(memory_selected)
+  );
+
+  mux_2x1 #(16) mux_memory_4 (
+      .i_in0(pc_high),
+      .i_in1(pc_low),
+      .i_sel(i_hazard_state),
+      .o_out(memory_pc)
+  );
+
+  mux_2x1 #(16) mux_memory_5 (
+      .i_in0(memory_selected),
+      .i_in1(memory_pc),
+      .i_sel(i_push_pc),
+      .o_out(memory_write_data)
+  );
+
+  data_memory dm (
+      .i_address(memory_address),
+      .i_write_data(memory_write_data),
+      .i_memory_read(i_mem_read),
+      .i_memory_write(i_mem_write),
+      .i_clk(i_clk),
+      .o_read_data(o_memory_data)
+  );
 
 endmodule

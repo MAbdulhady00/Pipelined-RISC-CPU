@@ -2,6 +2,7 @@
 module decode_exm_buffer (
     input i_clk,
     input i_reset,
+    input i_enable,
     input [2:0] i_alu_function,
     input [1:0] i_wb_selector,
     input [2:0] i_branch_selector,
@@ -26,6 +27,7 @@ module decode_exm_buffer (
     input [15:0] i_data2,
     input [2:0] i_rd,
     input [2:0] i_rs,
+    input [31:0] i_pc,
     output reg [2:0] o_alu_function,
     output reg [1:0] o_wb_selector,
     output reg [2:0] o_branch_selector,
@@ -49,7 +51,8 @@ module decode_exm_buffer (
     output reg [15:0] o_data1,
     output reg [15:0] o_data2,
     output reg [2:0] o_rd,
-    output reg [2:0] o_rs
+    output reg [2:0] o_rs,
+    output reg [31:0] o_pc
 );
   always @(posedge i_clk) begin
     if (i_reset) begin
@@ -77,7 +80,8 @@ module decode_exm_buffer (
       o_data2 <= 16'b0;
       o_rd <= 3'b0;
       o_rs <= 3'b0;
-    end else begin
+      o_pc <= 32'b0;
+    end else if (i_enable) begin
       o_alu_function <= i_alu_function;
       o_wb_selector <= i_wb_selector;
       o_branch_selector <= i_branch_selector;
@@ -102,6 +106,7 @@ module decode_exm_buffer (
       o_data2 <= i_data2;
       o_rd <= i_rd;
       o_rs <= i_rs;
+      o_pc <= i_pc;
     end
   end
 endmodule

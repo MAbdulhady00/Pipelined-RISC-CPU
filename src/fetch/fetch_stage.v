@@ -4,12 +4,14 @@ module fetch_stage (
     input i_reset,
     input [31:0] i_pc_new,
     input i_branch_decision,
-    output [15:0] o_instr
+    output [15:0] o_instr,
+    output [31:0] o_pc_inc
 );
   wire [31:0] pc_in;
   wire [31:0] pc_out;
 
-  // phase 1 enable always on
+  assign o_pc_inc = pc_out + 1;
+
   program_counter pc (
       .i_clk(i_clk),
       .i_reset(i_reset),
@@ -19,7 +21,7 @@ module fetch_stage (
   );
 
   mux_2x1 #(32) mux (
-      pc_out + 1,
+      o_pc_inc,
       i_pc_new,
       i_branch_decision,
       pc_in

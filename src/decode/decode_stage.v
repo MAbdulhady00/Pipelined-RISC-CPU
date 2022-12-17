@@ -6,6 +6,7 @@ module decode_stage (
     input i_write_back,
     input [2:0] i_write_addr,
     input [15:0] i_write_data,
+    input [31:0] i_pc,
     output [2:0] o_alu_function,
     output [1:0] o_wb_selector,
     output [2:0] o_branch_selector,
@@ -29,11 +30,12 @@ module decode_stage (
     output [15:0] o_data1,
     output [15:0] o_data2,
     output [2:0] o_rd,
-    output [2:0] o_rs
+    output [2:0] o_rs,
+    output [31:0] o_pc
 );
 
   wire read1, read2;
-  assign o_sh_amount = {{8{1'b0}}, i_instr[7:0]};  
+  assign o_sh_amount = {{8{1'b0}}, i_instr[7:0]};
   control_unit cu (
       .i_op_code(i_instr[15:11]),
       .i_interrupt(i_interrupt),
@@ -76,5 +78,6 @@ module decode_stage (
 
   assign o_rd = i_instr[10:8];
   assign o_rs = i_instr[7:5];
+  assign o_pc = i_pc;
 
 endmodule

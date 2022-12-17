@@ -7,7 +7,8 @@ module hazard_unit (
     output reg o_flush_f_d,
     output reg o_flush_d_em,
     output reg o_stall_d_em,
-    output reg o_branch_decision
+    output reg o_branch_decision,
+    output reg o_state
 );
   always @(*) begin
     o_flush_f_d = 1'b0;
@@ -18,6 +19,17 @@ module hazard_unit (
       o_flush_f_d = 1'b1;
       o_flush_d_em = 1'b1;
       o_branch_decision = 1'b1;
+    end
+    if (i_push_pc & !o_state) begin
+      o_stall_d_em = 1'b1;
+      o_flush_d_em = 1'b0;
+    end
+  end
+
+  always @(posedge i_clk) begin
+    o_state <= 1'b0;
+    if (i_push_pc & !o_state) begin
+      o_state <= 1'b1;
     end
   end
 
