@@ -5,9 +5,10 @@ ldm r1, 6
 ldm r3, 0
 
 ; address
-ldm r5, 53
-ldm r6, 50
-ldm r7, 47
+ldm r4, 52
+ldm r5, 56
+ldm r6, 53
+ldm r7, 49
 
 call r7
 
@@ -16,7 +17,8 @@ jmp r5
 
 ; r7 base case
 dec r1
-jz r6
+jz r4 // jump to ret
+jmp r6 // jump to body of recursion
 ret
 
 ; r6 recursion
@@ -25,3 +27,6 @@ call r7
 ret
 
 ; r5 end of program
+; fun(int x)
+; a += x;
+; return fun(x + 1);

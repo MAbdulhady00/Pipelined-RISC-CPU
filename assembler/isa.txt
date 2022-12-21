@@ -2,8 +2,8 @@
   "nop": running
   "setc": running
   "clrc": running
-  "call": testing
-  "ret": testing
+  "call": running
+  "ret": running
   "rti": not yet
   "not": running
   "add": running

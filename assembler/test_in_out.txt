@@ -1,0 +1,6 @@
+.code
+in r0
+ldm r7, 0
+std r0, r7
+mov r1, r0
+out r1
