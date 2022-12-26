@@ -11,14 +11,16 @@ module interrupt_hold (
     input i_interrupt_signal,
     input i_clk,
     input i_enable,
+    input i_reset,
     output reg o_interrupt_call
 );
 
   reg interrupt_ff = 0;
 
-  always @(negedge i_clk) begin
+  always @(posedge i_clk) begin
     interrupt_ff <= i_interrupt_signal;
-    if (i_enable) o_interrupt_call <= ~interrupt_ff & i_interrupt_signal;
+    if (i_reset) o_interrupt_call <= 1'b0;
+    else if (i_enable) o_interrupt_call <= ~interrupt_ff & i_interrupt_signal;
   end
 
 endmodule

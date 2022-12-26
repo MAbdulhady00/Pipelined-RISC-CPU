@@ -26,6 +26,7 @@ module decode_stage (
     output o_pop_pc,
     output o_push_pc,
     output o_branch_flags,
+    output o_hazard_instruction,
     output [15:0] o_sh_amount,
     output [15:0] o_data1,
     output [15:0] o_data2,
@@ -59,7 +60,8 @@ module decode_stage (
       .o_push_pc(o_push_pc),
       .o_branch_flags(o_branch_flags),
       .o_read1(read1),
-      .o_read2(read2)
+      .o_read2(read2),
+      .o_hazard_instruction(o_hazard_instruction)
   );
 
   register_file rf (

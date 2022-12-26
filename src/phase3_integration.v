@@ -15,6 +15,8 @@ module phase_3 (
   wire [2:0] decode_alu_function;
   wire [1:0] decode_wb_selector;
   wire [2:0] decode_branch_selector;
+  wire decode_interrupt;
+  wire decode_i_interrupt;
   wire decode_mov;
   wire decode_write_back;
   wire decode_inc_dec;
@@ -96,14 +98,22 @@ module phase_3 (
   wire [2:0] wb_write_addr;
   wire [15:0] wb_write_data;
 
+
+  wire interrupt_hold_call;
+  wire interrupt_hold_stall;
+  wire fetch_hazard_instruction;
+  wire decode_hazard_instruction;
+
   fetch_stage ftch (
-      .i_intterup_signal(1'b0),
+      .i_interrupt_signal(interrupt_hold_call & ~interrupt_hold_stall),
       .i_clk(i_clk),
       .i_reset(i_reset),
       .i_pc_new(exm_pc_new),
       .i_branch_decision(hazard_branch_decision),
       .o_instr(ftch_instr),
-      .o_pc_inc(ftch_pc)
+      .o_pc_inc(ftch_pc),
+      .o_interrupt(decode_interrupt),
+      .o_hazard_instruction(fetch_hazard_instruction)
   );
 
   wire reset_f_d;
@@ -113,15 +123,17 @@ module phase_3 (
       .i_reset(reset_f_d),
       .i_instr(ftch_instr),
       .i_pc(ftch_pc),
+      .i_interrupt(decode_interrupt),
       .o_pc(decode_i_pc),
-      .o_instr(decode_instr)
+      .o_instr(decode_instr),
+      .o_interrupt(decode_i_interrupt)
   );
 
   decode_stage ds (
       .i_instr(decode_instr),
       .i_reset(i_reset),
       .i_clk(i_clk),
-      .i_interrupt(1'b0),
+      .i_interrupt(decode_i_interrupt),
       .i_write_back(wb_write_back),
       .i_write_addr(wb_write_addr),
       .i_write_data(wb_write_data),
@@ -150,7 +162,8 @@ module phase_3 (
       .o_data2(decode_data2),
       .o_rd(decode_rd),
       .o_rs(decode_rs),
-      .o_pc(decode_pc)
+      .o_pc(decode_pc),
+      .o_hazard_instruction(decode_hazard_instruction)
   );
 
   wire reset_d_e;
@@ -301,12 +314,11 @@ module phase_3 (
       .o_write_back(wb_write_back)
   );
 
-  wire interrupt_hold_call;
-  wire interrupt_hold_stall;
   interrupt_hold ih (
       .i_interrupt_signal(i_interrupt),
       .i_clk(i_clk),
       .i_enable(~interrupt_hold_stall),
+      .i_reset(i_reset),
       .o_interrupt_call(interrupt_hold_call)
   );
 
@@ -315,9 +327,10 @@ module phase_3 (
       .i_push_pc(exm_i_push_pc),
       .i_pop_pc(exm_i_pop_pc),
       .i_branch_decision(exm_branch_decision),
-      .i_decode_imm(decode_imm),
       .i_interrupt_call(interrupt_hold_call),
       .i_exm_imm(exm_i_imm),
+      .i_fetch_hazard_instruction(fetch_hazard_instruction),
+      .i_decode_hazard_instruction(decode_hazard_instruction),
       .o_stall_interrupt(interrupt_hold_stall),
       .o_flush_f_d(hazard_flush_f_d),
       .o_flush_d_em(hazard_flush_d_exm),

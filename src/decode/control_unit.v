@@ -21,7 +21,8 @@ module control_unit (
     output reg o_push_pc,
     output reg o_branch_flags,
     output reg o_read1,
-    output reg o_read2
+    output reg o_read2,
+    output reg o_hazard_instruction
 );
 
   always @(*) begin
@@ -47,6 +48,7 @@ module control_unit (
     o_branch_flags = 1'b0;
     o_read1 = 1'b1;
     o_read2 = ~i_op_code[4];  // RTYPE
+    o_hazard_instruction = 1'b0;
 
     case (i_op_code)
       5'b00000: begin  // NOP
@@ -59,6 +61,7 @@ module control_unit (
         o_pop_pc = 1'b1;
         // o_stack_function = 1'b0;
         o_stack_operation = 1'b1;
+        o_hazard_instruction = 1'b1;
       end
       5'b00011: begin  // RTI
         o_mem_read = 1'b1;
@@ -73,9 +76,10 @@ module control_unit (
         o_push_pc = 1'b1;
         o_stack_function = 1'b1;
         o_stack_operation = 1'b1;
-        o_branch_flags = i_interrupt;
+        // o_branch_flags = i_interrupt;
         o_branch_operation = 1'b1;
         o_branch_selector = 2'b11;  // jump unconditionally to register
+        o_hazard_instruction = 1'b1;
       end
       5'b00110: begin  // CLRC
         o_change_carry = 1'b1;
@@ -137,6 +141,7 @@ module control_unit (
         o_imm = 1'b1;
         o_write_back = 1'b1;
         o_wb_selector = 2'b10;
+        o_hazard_instruction = 1'b1;
       end
       5'b10011: begin  // LDD
         o_mem_read = 1'b1;
@@ -159,20 +164,24 @@ module control_unit (
         o_stack_operation = 1'b1;
       end
       5'b11000: begin  // JZ
-        o_branch_operation = 1'b1;
+        o_branch_operation   = 1'b1;
         // o_branch_selector  = 2'b00;
+        o_hazard_instruction = 1'b1;
       end
       5'b11001: begin  // JN
         o_branch_operation = 1'b1;
-        o_branch_selector  = 2'b01;
+        o_branch_selector = 2'b01;
+        o_hazard_instruction = 1'b1;
       end
       5'b11010: begin  // JC
         o_branch_operation = 1'b1;
-        o_branch_selector  = 2'b10;
+        o_branch_selector = 2'b10;
+        o_hazard_instruction = 1'b1;
       end
       5'b11011: begin  // JMP
         o_branch_operation = 1'b1;
-        o_branch_selector  = 2'b11;
+        o_branch_selector = 2'b11;
+        o_hazard_instruction = 1'b1;
       end
       5'b11100: begin  // IN
         o_write_back  = 1'b1;
@@ -194,6 +203,14 @@ module control_unit (
         o_alu_function = 3'b111;
       end
     endcase
+
+    if (i_interrupt) begin
+      o_mem_write = 1'b1;
+      o_push_pc = 1'b1;
+      o_stack_function = 1'b1;
+      o_stack_operation = 1'b1;
+      o_branch_flags = 1'b1;
+    end
   end
 
 endmodule
