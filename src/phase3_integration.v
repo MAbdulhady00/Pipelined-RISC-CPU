@@ -1,6 +1,7 @@
 module phase_3 (
     input i_clk,
     input i_reset,
+    input i_interrupt,
     input [15:0] i_input_port,
     output [15:0] o_output_port
 );
@@ -153,7 +154,7 @@ module phase_3 (
   );
 
   wire reset_d_e;
-  assign reset_d_e = i_reset | exm_i_imm | hazard_flush_d_exm;
+  assign reset_d_e = i_reset | hazard_flush_d_exm;
   decode_exm_buffer decode_exm_buff (
       .i_clk(i_clk),
       .i_reset(reset_d_e),
@@ -300,11 +301,24 @@ module phase_3 (
       .o_write_back(wb_write_back)
   );
 
+  wire interrupt_hold_call;
+  wire interrupt_hold_stall;
+  interrupt_hold ih (
+      .i_interrupt_signal(i_interrupt),
+      .i_clk(i_clk),
+      .i_enable(~interrupt_hold_stall),
+      .o_interrupt_call(interrupt_hold_call)
+  );
+
   hazard_unit hazard_unit (
       .i_clk(i_clk),
       .i_push_pc(exm_i_push_pc),
       .i_pop_pc(exm_i_pop_pc),
       .i_branch_decision(exm_branch_decision),
+      .i_decode_imm(decode_imm),
+      .i_interrupt_call(interrupt_hold_call),
+      .i_exm_imm(exm_i_imm),
+      .o_stall_interrupt(interrupt_hold_stall),
       .o_flush_f_d(hazard_flush_f_d),
       .o_flush_d_em(hazard_flush_d_exm),
       .o_stall_d_em(hazard_stall_d_exm),
