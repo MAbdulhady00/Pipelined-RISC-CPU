@@ -194,6 +194,28 @@ def main():
         file.seek(0)
         current_line = 0
 
+        # find interrupt section
+        for line in file:
+            line = line.lower()
+            if line.startswith('.interrupt'):
+                break
+
+            current_line += 1
+
+        # fill interrupt
+        interrupt_code = read_code_section(file, isa, config['no_hazards'])
+        if len(interrupt_code) > 32:
+            raise MemoryError('Interrupt code size may not exceed 32 words')
+
+        with open(file_name + '_code.txt', 'w') as code_file:
+            for hex_num in interrupt_code:
+                code_file.write(f'{hex_num:0>4}\n')
+            for _ in range(32 - len(interrupt_code)):
+                code_file.write('0\n')
+
+        file.seek(0)
+        current_line = 0
+
         # find code section
         for line in file:
             line = line.lower()
@@ -204,11 +226,10 @@ def main():
 
         # fill code
         code = read_code_section(file, isa, config['no_hazards'])
-        with open(file_name + '_code.txt', 'w') as code_file:
-            for _ in range(32):
-                code_file.write('0\n')
+        with open(file_name + '_code.txt', 'a') as code_file:
             for hex_num in code:
                 code_file.write(f'{hex_num:0>4}\n')
+
     # with open('code.s') as file:
     #     word: str
     #     for line in file:
