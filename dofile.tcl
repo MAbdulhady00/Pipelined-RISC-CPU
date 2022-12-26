@@ -1,5 +1,6 @@
 vsim work.phase_3
 add wave -position insertpoint sim:/phase_3/*
+add wave -position insertpoint sim:/phase_3/ih/*
 add wave -position insertpoint sim:/phase_3/ftch/*
 add wave -position insertpoint sim:/phase_3/ftch/pc/*
 add wave -position insertpoint sim:/phase_3/ds/cu/*

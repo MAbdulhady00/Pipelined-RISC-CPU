@@ -1,0 +1,14 @@
+.code
+ldm r0, 0
+ldm r2, 36
+ldm r0, 1
+ldm r0, 2
+ldm r0, 3
+ldm r0, 4
+ldm r0, 5
+ldm r0, 6
+jmp r2
+
+.interrupt
+out r0
+rti

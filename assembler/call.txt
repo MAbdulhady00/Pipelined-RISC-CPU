@@ -2,7 +2,7 @@
 
 ldm r7, 0
 ldm r0, 43
-ldm r6, 45
+ldm r6, 46
 call r0
 ; skip
 inc r7
@@ -11,5 +11,6 @@ add r7, r7
 jmp r6
 ; r0
 inc r7 ; expect r7 == 1
-ret ; expect r7 == 6
+setc
+rti ; expect r7 == 6
 ; r6
