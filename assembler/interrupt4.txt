@@ -1,0 +1,14 @@
+.interrupt
+ldm r0, 0
+inc r0
+inc r0
+inc r0
+inc r0
+inc r0
+inc r0
+inc r0
+inc r0
+rti
+
+.code
+nop

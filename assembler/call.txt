@@ -12,5 +12,5 @@ jmp r6
 ; r0
 inc r7 ; expect r7 == 1
 setc
-rti ; expect r7 == 6
+ret ; expect r7 == 6
 ; r6

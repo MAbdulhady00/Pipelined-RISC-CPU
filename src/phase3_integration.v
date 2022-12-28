@@ -80,6 +80,7 @@ module phase_3 (
   // hazard unit
   wire hazard_flush_f_d;
   wire hazard_flush_d_exm;
+  wire hazard_stall_f_d;
   wire hazard_stall_d_exm;
   wire hazard_branch_decision;
   wire hazard_state;
@@ -108,6 +109,7 @@ module phase_3 (
       .i_interrupt_signal(interrupt_hold_call & ~interrupt_hold_stall),
       .i_clk(i_clk),
       .i_reset(i_reset),
+      .i_enable(~hazard_stall_f_d),
       .i_pc_new(exm_pc_new),
       .i_branch_decision(hazard_branch_decision),
       .o_instr(ftch_instr),
@@ -120,6 +122,7 @@ module phase_3 (
   assign reset_f_d = i_reset | hazard_flush_f_d;
   fetch_decode_buffer ftch_decode_buff (
       .i_clk(i_clk),
+      .i_enable(~hazard_stall_f_d),
       .i_reset(reset_f_d),
       .i_instr(ftch_instr),
       .i_pc(ftch_pc),
@@ -317,7 +320,7 @@ module phase_3 (
   interrupt_hold ih (
       .i_interrupt_signal(i_interrupt),
       .i_clk(i_clk),
-      .i_enable(~interrupt_hold_stall),
+      .i_enable(~interrupt_hold_call | ~interrupt_hold_stall),
       .i_reset(i_reset),
       .o_interrupt_call(interrupt_hold_call)
   );
@@ -327,6 +330,7 @@ module phase_3 (
       .i_push_pc(exm_i_push_pc),
       .i_pop_pc(exm_i_pop_pc),
       .i_branch_decision(exm_branch_decision),
+      .i_branch_operation(exm_i_branch_operation),
       .i_interrupt_call(interrupt_hold_call),
       .i_exm_imm(exm_i_imm),
       .i_fetch_hazard_instruction(fetch_hazard_instruction),
@@ -334,6 +338,7 @@ module phase_3 (
       .o_stall_interrupt(interrupt_hold_stall),
       .o_flush_f_d(hazard_flush_f_d),
       .o_flush_d_em(hazard_flush_d_exm),
+      .o_stall_f_d(hazard_stall_f_d),
       .o_stall_d_em(hazard_stall_d_exm),
       .o_branch_decision(hazard_branch_decision),
       .o_state(hazard_state)

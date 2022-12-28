@@ -1,5 +1,6 @@
 module fetch_stage (
     input i_interrupt_signal,
+    input i_enable,
     input i_clk,
     input i_reset,
     input [31:0] i_pc_new,
@@ -13,7 +14,7 @@ module fetch_stage (
   wire [31:0] pc_out;
   wire [31:0] pc_inc;
   wire [15:0] instr;
-  wire opcode;
+  wire [ 4:0] opcode;
 
   assign opcode = instr[15:11];
 
@@ -21,8 +22,8 @@ module fetch_stage (
   assign o_interrupt = i_interrupt_signal;
   // call | ret | rti | jz | jn | jc | jmp | ldm
   assign o_hazard_instruction = 
-  (opcode === 5'b00101) | (opcode === 5'b00010) | (opcode === 5'b00011) | 
-  (opcode === 5'b11000) | (opcode === 5'b11001) | (opcode === 5'b11010) | (opcode === 5'b11011) |
+  (opcode === 5'b00101) || (opcode === 5'b00010) || (opcode === 5'b00011) || 
+  (opcode === 5'b11000) || (opcode === 5'b11001) || (opcode === 5'b11010) || (opcode === 5'b11011) ||
   (opcode === 5'b10010);
 
 
@@ -30,7 +31,7 @@ module fetch_stage (
       .i_clk(i_clk),
       .i_reset(i_reset),
       .i_interrupt(i_interrupt_signal),
-      .i_enable(1'b1),
+      .i_enable(i_enable),
       .i_data(pc_in),
       .o_data(pc_out)
   );

@@ -180,7 +180,7 @@ module exm_stage (
   );
 
   // branch decision
-  assign o_branch_decision = (~i_hazard_state & ~i_branch_operation)? 1'b0 : (i_branch_selector == 2'b11)? 1'b1 :
+  assign o_branch_decision = (i_hazard_state | ~i_branch_operation)? 1'b0 : (i_branch_selector == 2'b11)? 1'b1 :
     (i_branch_selector == 2'b10)? o_carry_flag :
     (i_branch_selector == 2'b01)? o_negative_flag :
     o_zero_flag;
@@ -203,8 +203,8 @@ module exm_stage (
   // PC input
 
   mux_2x1 #(3) mux_pc_1 (
-      .i_in0({o_zero_flag, o_negative_flag, o_carry_flag}),
-      .i_in1(i_pc[31:29]),
+      .i_in0(i_pc[31:29]),
+      .i_in1({o_zero_flag, o_negative_flag, o_carry_flag}),
       .i_sel(i_branch_flags),
       .o_out(upper_3bits_pc)
   );

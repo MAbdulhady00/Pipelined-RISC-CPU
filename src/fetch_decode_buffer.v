@@ -1,6 +1,7 @@
 module fetch_decode_buffer (
     input i_clk,
     input i_reset,
+    input i_enable,
     input [31:0] i_pc,
     input [15:0] i_instr,
     input i_interrupt,
@@ -15,7 +16,7 @@ module fetch_decode_buffer (
       o_pc <= 32'b0;
       o_instr <= NOP_INSTR;
       o_interrupt <= 1'b0;
-    end else begin
+    end else if (i_enable) begin
       o_pc <= i_pc;
       o_instr <= i_instr;
       o_interrupt <= i_interrupt;
