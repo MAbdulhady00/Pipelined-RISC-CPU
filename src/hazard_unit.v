@@ -8,13 +8,15 @@ module hazard_unit (
     input i_fetch_hazard_instruction,
     input i_decode_hazard_instruction,
     input i_branch_operation,
+    input i_decode_imm,
     output reg o_flush_f_d,
     output reg o_flush_d_em,
     output reg o_stall_f_d,
     output reg o_stall_d_em,
     output reg o_stall_interrupt,
     output reg o_branch_decision,
-    output reg o_state
+    output reg o_state,
+    output reg o_insert_nop
 );
   reg flush_d_em, flush_f_d;
   always @(*) begin
@@ -22,7 +24,8 @@ module hazard_unit (
     flush_d_em = 1'b0;
     o_stall_d_em = 1'b0;
     o_branch_decision = 1'b0;
-    o_stall_interrupt = i_fetch_hazard_instruction | i_decode_hazard_instruction | ((i_pop_pc) & ~o_state);
+    o_insert_nop = i_interrupt_call & ~(i_decode_imm & ~o_flush_d_em);
+    o_stall_interrupt = (i_decode_hazard_instruction & ~o_flush_d_em) | ((i_pop_pc) & ~o_state);
 
     if (i_branch_decision) begin
       flush_f_d = 1'b1;
@@ -43,7 +46,7 @@ module hazard_unit (
 
     o_flush_d_em = flush_d_em | i_exm_imm;
     o_flush_f_d  = flush_f_d & (~i_interrupt_call | o_stall_interrupt);
-    o_stall_f_d  = ~i_branch_operation & i_push_pc & ~o_state;  // interrupt call cycle #1
+    o_stall_f_d  = (~i_branch_operation & i_push_pc & ~o_state); // interrupt call cycle #1
   end
 
   always @(posedge i_clk) begin

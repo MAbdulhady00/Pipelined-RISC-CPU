@@ -3,6 +3,7 @@ module fetch_stage (
     input i_enable,
     input i_clk,
     input i_reset,
+    input i_insert_nop,
     input [31:0] i_pc_new,
     input i_branch_decision,
     output [15:0] o_instr,
@@ -53,7 +54,7 @@ module fetch_stage (
   mux_2x1 #(16) mux2 (
       instr,
       16'b0,
-      i_interrupt_signal,
+      i_insert_nop,
       o_instr
   );
 
