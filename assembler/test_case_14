@@ -1,0 +1,5 @@
+.code
+ldm r1, 5
+push r1
+ldm r1, 1
+pop r1

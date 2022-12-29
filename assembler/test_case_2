@@ -1,0 +1,9 @@
+.code
+ldm r0, 1
+ldm r1, 2
+ldm r2, 3
+ldm r3, 4
+ldm r4, 5
+ldm r5, 6
+ldm r6, 7
+ldm r7, 8

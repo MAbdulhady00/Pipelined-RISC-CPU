@@ -1,0 +1,5 @@
+.code
+ldm r0, 1
+nop
+ldm r1, 2
+nop

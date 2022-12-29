@@ -1,0 +1,4 @@
+.code
+ldm r4, 2
+ldd r1, r4
+std r1, r6

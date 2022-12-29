@@ -1,0 +1,3 @@
+.code
+ldm r0, 1
+dec r0

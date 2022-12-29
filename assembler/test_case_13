@@ -1,0 +1,3 @@
+.code
+ldm r1, 5
+shr r1, 1
