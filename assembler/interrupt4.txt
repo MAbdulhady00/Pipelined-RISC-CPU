@@ -11,4 +11,8 @@ inc r0
 rti
 
 .code
+ldm r1, 2
+inc r1
+inc r1
+inc r1
 nop

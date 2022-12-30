@@ -1,4 +1,4 @@
 .code
 ldm r1, 1
-ldm r2, 3
+ldm r2, 4
 or r2, r1

@@ -1,0 +1,6 @@
+.code
+setc
+ldm r1, 1 
+shr r1, 1
+clrc
+shr r1, 1

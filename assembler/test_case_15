@@ -1,4 +1,6 @@
 .code
 ldm r4, 2
+ldm r6, 3
 ldd r1, r4
+add r1, r4
 std r1, r6

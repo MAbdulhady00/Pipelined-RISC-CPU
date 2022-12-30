@@ -1,0 +1,4 @@
+.code
+ldm r0, ffff
+ldm r1, fffe
+sub r0, r1

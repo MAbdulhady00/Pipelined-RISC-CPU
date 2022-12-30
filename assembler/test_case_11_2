@@ -1,0 +1,4 @@
+.code
+ldm r1, ffff
+ldm r2, fffe
+or r2, r1
