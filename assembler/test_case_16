@@ -14,3 +14,4 @@ jmp r2
 ldm r3, 5
 inc r3
 jmp r2
+rti
