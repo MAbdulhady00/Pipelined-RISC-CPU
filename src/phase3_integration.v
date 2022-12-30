@@ -101,6 +101,7 @@ module phase_3 (
 
 
   wire interrupt_hold_call;
+  wire hazard_fetch_nop;
   wire interrupt_hold_stall;
   wire fetch_hazard_instruction;
   wire decode_hazard_instruction;
@@ -112,6 +113,7 @@ module phase_3 (
       .i_enable(~hazard_stall_f_d),
       .i_pc_new(exm_pc_new),
       .i_branch_decision(hazard_branch_decision),
+      .i_insert_nop(hazard_fetch_nop),
       .o_instr(ftch_instr),
       .o_pc_inc(ftch_pc),
       .o_interrupt(decode_interrupt),
@@ -333,6 +335,7 @@ module phase_3 (
       .i_branch_operation(exm_i_branch_operation),
       .i_interrupt_call(interrupt_hold_call),
       .i_exm_imm(exm_i_imm),
+      .i_decode_imm(decode_imm),
       .i_fetch_hazard_instruction(fetch_hazard_instruction),
       .i_decode_hazard_instruction(decode_hazard_instruction),
       .o_stall_interrupt(interrupt_hold_stall),
@@ -341,7 +344,8 @@ module phase_3 (
       .o_stall_f_d(hazard_stall_f_d),
       .o_stall_d_em(hazard_stall_d_exm),
       .o_branch_decision(hazard_branch_decision),
-      .o_state(hazard_state)
+      .o_state(hazard_state),
+      .o_insert_nop(hazard_fetch_nop)
   );
 
 endmodule
