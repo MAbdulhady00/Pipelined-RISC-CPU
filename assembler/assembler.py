@@ -8,6 +8,10 @@ from pathlib import Path
 current_line = 0
 
 
+def is_comment(line: str):
+    return line.startswith(';') or line.startswith('#')
+
+
 def int_to_hex(num: int) -> str:
     if num > 0xFFFF:
         raise ValueError(f'Value is larger than 16 bits, line {current_line}')
@@ -49,7 +53,7 @@ def read_data_section(file: TextIOWrapper) -> list[str]:
 
         # split on whitespace
         words = line.split()
-        if len(words) > 0 and not words[0].startswith(';'):
+        if len(words) > 0 and not is_comment(words[0]):
             word = words[0]
             if len(words) >= 2:
                 word = words[1]
@@ -141,7 +145,7 @@ def read_code_section(
 
         # remove commas then split on whitespace
         words = line.replace(',', ' ').split()
-        if len(words) > 0 and not words[0].startswith(';'):
+        if len(words) > 0 and not is_comment(words[0]):
             code_list.extend(parse_instruction(words, isa))
             if pad:
                 code_list.extend(nop_padding)
@@ -197,7 +201,7 @@ def main():
         # find interrupt section
         for line in file:
             line = line.lower()
-            if line.startswith('.interrupt'):
+            if line.startswith('.interrupt') or line.startswith('.org 0'):
                 break
 
             current_line += 1
@@ -219,7 +223,7 @@ def main():
         # find code section
         for line in file:
             line = line.lower()
-            if line.startswith('.code'):
+            if line.startswith('.code') or line.startswith('.org 20'):
                 break
 
             current_line += 1
@@ -229,15 +233,6 @@ def main():
         with open(file_name + '_code.txt', 'a') as code_file:
             for hex_num in code:
                 code_file.write(f'{hex_num:0>4}\n')
-
-    # with open('code.s') as file:
-    #     word: str
-    #     for line in file:
-    #         # split on whitespac e
-    #         for word in line.split():
-    #             # ignore comments
-    #             if word.startswith(';'):
-    #                 continue
 
 
 if __name__ == '__main__':
