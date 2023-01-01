@@ -1,0 +1,17 @@
+.interrupt
+AND R3,R4
+ADD R1,R4
+OUT R4
+
+.code
+ldm R1, 5                
+ldm R2, 5                  
+ldm R3, 5                  
+ldm R4, 5                   
+MOV R3,R5               
+ADD R1,R4              
+SUB R5,R4               
+AND R7,R4               
+OR R2, R1               
+SHL R1,4                
+SHR R1,2                

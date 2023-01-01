@@ -1,0 +1,100 @@
+.code
+setc
+clrc
+
+ldm r0, 1
+ldm r1, 2
+ldm r2, 3
+ldm r3, 4
+ldm r4, 5
+ldm r5, 6
+ldm r6, 7
+ldm r7, 8
+
+ldm r0, 1
+nop
+ldm r1, 2
+nop
+
+ldm r0, 1
+not r0
+
+ldm r1, 2
+inc r1
+dec r1
+out r1
+in r1
+
+ldm r1, 2
+inc r1
+
+ldm r0, 1
+dec r0
+
+ldm r0, 1
+ldm r1, 2
+mov r1, r0
+
+ldm r0, 1
+ldm r1, 2
+add r0, r1
+
+ldm r0, 1
+ldm r1, 2
+sub r0, r1
+
+ldm r1, 5
+ldm r2, 3
+and r1, r2
+
+ldm r1, 1
+ldm r2, 4
+or r2, r1
+
+ldm r1, 3
+shl r1, 1
+
+setc
+ldm r1, 5
+shr r1, 1
+
+ldm r1, 5
+push r1
+ldm r1, 1
+pop r1
+
+ldm r4, 2
+ldm r6, 3
+ldd r1, r4
+add r1, r4
+std r1, r6
+ldm r3, 4
+ldm r2, 2
+ldm r5, 1
+ldm r4, 2
+ldm r7, 46
+ldm r6, ffh
+ldm r1,5
+      ldd r5,r2
+      add r4,r2
+      std r2,r5
+      inc r5   
+      dec r1 
+      jz r6
+      jmp r7 
+ldm r1, 0
+ldm r2, 36
+ldm r0, 1
+ldm r0, 2
+jmp r1
+ldm r0, 3
+ldm r0, 4
+ldm r0, 5
+ldm r0, 6
+jmp r2
+
+.interrupt
+ldm r3, 5
+inc r3
+jmp r2
+rti
