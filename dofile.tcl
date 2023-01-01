@@ -130,6 +130,7 @@ force -freeze sim:/phase_3/i_input_port 1111111111111111 0
 run 100
 force -freeze sim:/phase_3/i_input_port 1111001100100000 0
 run 100
+run 25
 force -freeze sim:/phase_3/i_interrupt 1 0
-run 400
+run 900
 

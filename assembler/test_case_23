@@ -11,7 +11,7 @@ IN R4
 MOV R3,R5               
 ADD R1,R4               
 SUB R5,R4              
-AND R7,R4              
+AND R7,R1              
 OR R2, R1              
 SHL R1,4                
 SHR R1,4                
