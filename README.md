@@ -126,12 +126,12 @@ The processor is specified using `verilog` behavioral models.
       `Note: PC is larger than memory address space so we use the most significant 3-bit to store the flags while push/pop.`
 
    4. JZ/JN/JC/JMP (waste 2 cycles): Static branch prediction with not taken. Value is ready in decode stage while the result is ready in execute stage.
-   5. Interrput:  
-    5.1. No Instructions are fetched when a 0->1 transition is detected in interrupt signal except in one case
-    5.2. If LDM is in fetch stage then one memory location is fetched (which is ldm data) 
-    5.3. NOPs are inserted -together with special signals- to handle push of PC to memoory
-    5.4. JZ/JN/JC/JMP/Call instructions are waited -1 or 2 cycles- till they modify the PC register before pushing it to memory
-    5.5. ret/rti instructions are waited -1 or 2 or 3 cycles- till the get PC from memory and store it in the PC register
+   5. Interrput:
+      1. No Instructions are fetched when a 0->1 transition is detected in interrupt signal except in one case
+      2. If LDM is in fetch stage then one memory location is fetched (which is ldm data)
+      3. NOPs are inserted -together with special signals- to handle push of PC to memoory
+      4. JZ/JN/JC/JMP/Call instructions are waited -1 or 2 cycles- till they modify the PC register before pushing it to memory
+      5. ret/rti instructions are waited -1 or 2 or 3 cycles- till the get PC from memory and store it in the PC register
 
 # Control Unit Design
 
