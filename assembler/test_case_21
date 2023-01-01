@@ -17,7 +17,7 @@ ldm r1,5
       call r0 
       pop r2
       std r2,r5
-      inc r5   
+      inc r5 
       dec r1 
       jz r6
       jmp r7 
