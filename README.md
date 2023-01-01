@@ -119,13 +119,19 @@ The processor is specified using `verilog` behavioral models.
 
 2. Control-Hazards:
 
-   1. LDM: 2-memory locations instruction hence we need to fetch 2-times since DataBus is limited to 16-bit only. The second 16-bit fetched are data bits not instruction bits **thus we must flush the Decode/Execute-Memory buffer** in order to avoid executing the instructions' data bits.
-   2. Call/Interrupt: Needs 2-cycles to push the 32-bit PC and the 3-bit flags.
-   3. RTI/RET: Needs 2-cycles to fetch the 32-bit PC and the 3-bit flags from memory.
+   1. LDM (no waste but data is stored in 2 cycles): 2-memory locations instruction hence we need to fetch 2-times since DataBus is limited to 16-bit only. The second 16-bit fetched are data bits not instruction bits **thus we must flush the Decode/Execute-Memory buffer** in order to avoid executing the instructions' data bits.
+   2. Call (waste 2 cycles): Needs 2-cycles to push the 32-bit PC and the 3-bit flags.
+   3. RTI/RET (waste 3 cycles): Needs 2-cycles to fetch the 32-bit PC and the 3-bit flags from memory.
 
       `Note: PC is larger than memory address space so we use the most significant 3-bit to store the flags while push/pop.`
 
-   4. JZ/JN/JC/JMP: Static branch prediction with not taken. Value is ready in decode stage while the result is ready in execute stage.
+   4. JZ/JN/JC/JMP (waste 2 cycles): Static branch prediction with not taken. Value is ready in decode stage while the result is ready in execute stage.
+   5. Interrput:  
+    5.1. No Instructions are fetched when a 0->1 transition is detected in interrupt signal except in one case
+    5.2. If LDM is in fetch stage then one memory location is fetched (which is ldm data) 
+    5.3. NOPs are inserted -together with special signals- to handle push of PC to memoory
+    5.4. JZ/JN/JC/JMP/Call instructions are waited -1 or 2 cycles- till they modify the PC register before pushing it to memory
+    5.5. ret/rti instructions are waited -1 or 2 or 3 cycles- till the get PC from memory and store it in the PC register
 
 # Control Unit Design
 
