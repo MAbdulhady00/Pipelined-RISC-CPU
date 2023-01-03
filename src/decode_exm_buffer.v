@@ -28,6 +28,10 @@ module decode_exm_buffer (
     input [2:0] i_rd,
     input [2:0] i_rs,
     input [31:0] i_pc,
+    input  i_change_zero,
+    input   i_zero_value,
+    input  i_change_negative,
+    input  i_negative_value,
     output reg [2:0] o_alu_function,
     output reg [1:0] o_wb_selector,
     output reg [2:0] o_branch_selector,
@@ -52,7 +56,11 @@ module decode_exm_buffer (
     output reg [15:0] o_data2,
     output reg [2:0] o_rd,
     output reg [2:0] o_rs,
-    output reg [31:0] o_pc
+    output reg [31:0] o_pc,
+    output reg  o_change_zero,
+    output reg  o_zero_value,
+    output reg  o_change_negative,
+    output reg  o_negative_value
 );
   always @(posedge i_clk) begin
     if (i_reset) begin
@@ -64,6 +72,10 @@ module decode_exm_buffer (
       o_inc_dec <= 1'b0;
       o_change_carry <= 1'b0;
       o_carry_value <= 1'b0;
+      o_change_zero <= 1'b0;
+      o_zero_value <= 1'b0;
+      o_change_negative <= 1'b0;
+      o_negative_value <= 1'b0;
       o_mem_read <= 1'b0;
       o_mem_write <= 1'b0;
       o_stack_operation <= 1'b0;
@@ -90,6 +102,10 @@ module decode_exm_buffer (
       o_inc_dec <= i_inc_dec;
       o_change_carry <= i_change_carry;
       o_carry_value <= i_carry_value;
+      o_change_zero <= i_change_zero;
+      o_zero_value <= i_zero_value;
+      o_change_negative <= i_change_negative;
+      o_negative_value <= i_negative_value;
       o_mem_read <= i_mem_read;
       o_mem_write <= i_mem_write;
       o_stack_operation <= i_stack_operation;

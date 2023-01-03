@@ -9,6 +9,10 @@ module exm_stage (
     input         i_inc_dec,
     input         i_change_carry,
     input         i_carry_value,
+    input         i_change_zero,
+    input         i_zero_value,
+    input         i_change_negative,
+    input         i_negative_value,
     input         i_mem_read,
     input         i_mem_write,
     input         i_stack_operation,
@@ -126,21 +130,39 @@ module exm_stage (
       .i_sel(i_inc_dec),
       .o_out(alu_input_2)
   );
-  wire carry_flag_r;
+  wire [15:0] alu_input_1_final;
+  wire [15:0] alu_input_2_final;
+  mux_2x1 #(16) mux_alu_inputs_1(
+      .i_in0(data1),
+      .i_in1(alu_input_2),
+      .i_sel(i_alu_function === 3'b011 & ~i_inc_dec),
+      .o_out(alu_input_1_final)
+  );
+  mux_2x1 #(16) mux_alu_inputs_2(
+      .i_in0(alu_input_2),
+      .i_in1(data1),
+      .i_sel(i_alu_function === 3'b011 & ~i_inc_dec),
+      .o_out(alu_input_2_final)
+  );
+  wire carry_flag_r, zero_flag_r;
   assign carry_flag_r = (i_change_carry) ? i_carry_value : carry_flag;
+  assign zero_flag_r = (i_change_zero) ? i_zero_value : zero_flag;
+
   flag_register fr (
       .i_clk          (i_clk),            //clock signal
       .i_rst          (i_reset),          // reset signal
-      .i_zero_flag    (zero_flag),        // zero flag
+      .i_zero_flag    (zero_flag_r),        // zero flag
       .i_negative_flag(negative_flag),    // negative flag
       .i_carry_flag   (carry_flag_r),     // carry flag 
       .o_zero_flag    (o_zero_flag),      // zero flag
       .o_negative_flag(o_negative_flag),  // negative flag
       .o_carry_flag   (o_carry_flag)      // carry flag 
   );
+
+
   alu alu_unit (
-      .i_data_1       (data1),              // source
-      .i_data_2       (alu_input_2),        // destination
+      .i_data_1       (alu_input_1_final),              // source
+      .i_data_2       (alu_input_2_final),        // destination
       .i_op           (i_alu_function),     // opcode 
       .i_zero_flag    (o_zero_flag),        // zero flag
       .i_negative_flag(o_negative_flag),    // negative flag

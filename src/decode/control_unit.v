@@ -22,7 +22,11 @@ module control_unit (
     output reg o_branch_flags,
     output reg o_read1,
     output reg o_read2,
-    output reg o_hazard_instruction
+    output reg o_hazard_instruction,
+    output reg o_change_zero,
+    output reg o_zero_value,
+    output reg o_change_negative,
+    output reg o_negative_value
 );
 
   always @(*) begin
@@ -49,6 +53,10 @@ module control_unit (
     o_read1 = 1'b1;
     o_read2 = ~i_op_code[4];  // RTYPE
     o_hazard_instruction = 1'b0;
+    o_change_zero = 1'b0;
+    o_zero_value = 1'b0;
+    o_change_negative = 1'b0;
+    o_negative_value = 1'b0;
 
     case (i_op_code)
       5'b00000: begin  // NOP
@@ -167,16 +175,22 @@ module control_unit (
         o_branch_operation   = 1'b1;
         // o_branch_selector  = 2'b00;
         o_hazard_instruction = 1'b1;
+        o_change_zero = 1'b1;
+        o_zero_value = 1'b0;
       end
       5'b11001: begin  // JN
         o_branch_operation = 1'b1;
         o_branch_selector = 2'b01;
         o_hazard_instruction = 1'b1;
+        o_change_negative = 1'b1;
+        o_negative_value = 1'b0;
       end
       5'b11010: begin  // JC
         o_branch_operation = 1'b1;
         o_branch_selector = 2'b10;
         o_hazard_instruction = 1'b1;
+        o_change_carry = 1'b1;
+        o_carry_value = 1'b0;
       end
       5'b11011: begin  // JMP
         o_branch_operation = 1'b1;

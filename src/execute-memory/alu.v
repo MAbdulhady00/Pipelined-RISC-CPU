@@ -35,7 +35,7 @@ module alu (
       //Add
       3'b010:  {o_carry_flag, o_result} <= i_data_1 + i_data_2;
       //Sub
-      3'b011:  {o_carry_flag, o_result} <= i_data_2 - i_data_1;
+      3'b011:  {o_carry_flag, o_result} <= i_data_1 - i_data_2;
       //And
       3'b100:  o_result <= i_data_1 & i_data_2;
       //Or

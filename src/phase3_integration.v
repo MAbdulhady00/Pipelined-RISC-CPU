@@ -22,6 +22,10 @@ module phase_3 (
   wire decode_inc_dec;
   wire decode_change_carry;
   wire decode_carry_value;
+  wire decode_change_negative;
+  wire decode_negative_value;
+  wire decode_change_zero;
+  wire decode_zero_value;
   wire decode_mem_read;
   wire decode_mem_write;
   wire decode_stack_operation;
@@ -59,6 +63,10 @@ module phase_3 (
   wire exm_i_inc_dec;
   wire exm_i_change_carry;
   wire exm_i_carry_value;
+  wire exm_i_change_zero;
+  wire exm_i_zero_value;
+  wire exm_i_change_negative;
+  wire exm_i_negative_value;
   wire exm_i_mem_read;
   wire exm_i_mem_write;
   wire exm_i_stack_operation;
@@ -151,6 +159,10 @@ module phase_3 (
       .o_inc_dec(decode_inc_dec),
       .o_change_carry(decode_change_carry),
       .o_carry_value(decode_carry_value),
+      .o_change_negative(decode_change_negative),
+      .o_negative_value(decode_negative_value),
+      .o_change_zero(decode_change_zero),
+      .o_zero_value(decode_zero_value),
       .o_mem_read(decode_mem_read),
       .o_mem_write(decode_mem_write),
       .o_stack_operation(decode_stack_operation),
@@ -186,6 +198,10 @@ module phase_3 (
       .i_inc_dec(decode_inc_dec),
       .i_change_carry(decode_change_carry),
       .i_carry_value(decode_carry_value),
+      .i_change_negative(decode_change_negative),
+      .i_negative_value(decode_negative_value),
+      .i_change_zero(decode_change_zero),
+      .i_zero_value(decode_zero_value),
       .i_mem_read(decode_mem_read),
       .i_mem_write(decode_mem_write),
       .i_stack_operation(decode_stack_operation),
@@ -210,6 +226,10 @@ module phase_3 (
       .o_inc_dec(exm_i_inc_dec),
       .o_change_carry(exm_i_change_carry),
       .o_carry_value(exm_i_carry_value),
+      .o_change_zero(exm_i_change_zero),
+      .o_zero_value(exm_i_zero_value),
+      .o_change_negative(exm_i_change_negative),
+      .o_negative_value(exm_i_negative_value),
       .o_mem_read(exm_i_mem_read),
       .o_mem_write(exm_i_mem_write),
       .o_stack_operation(exm_i_stack_operation),
@@ -251,6 +271,10 @@ module phase_3 (
       .i_inc_dec(exm_i_inc_dec),
       .i_change_carry(exm_i_change_carry),
       .i_carry_value(exm_i_carry_value),
+      .i_change_negative(exm_i_change_negative),
+      .i_negative_value(exm_i_negative_value),
+      .i_change_zero(exm_i_change_zero),
+      .i_zero_value(exm_i_zero_value),
       .i_mem_read(exm_i_mem_read),
       .i_mem_write(exm_i_mem_write),
       .i_stack_operation(exm_i_stack_operation),

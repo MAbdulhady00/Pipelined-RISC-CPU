@@ -12,8 +12,8 @@ def is_comment(line: str):
     return line.startswith(';') or line.startswith('#')
 
 
-def int_to_hex(num: int, check: bool = True) -> str:
-    if check and num > 0xFFFF:
+def int_to_hex(num: int) -> str:
+    if num > 0xFFFF:
         raise ValueError(f'Value is larger than 16 bits, line {current_line}')
     return hex(num).lstrip('0x')
 
@@ -22,13 +22,11 @@ def int_to_bin(num: int) -> str:
     return bin(num).lstrip('0b')
 
 
-def parse_data(word: str, check: bool = True):
+def parse_data(word: str):
     raw_num = word
     # parse hex number
     if raw_num.endswith('h'):
-        raw_num = raw_num.rstrip('h')
-
-    raw_num = '0x' + raw_num
+        raw_num = '0x' + raw_num.rstrip('h')
     val: int
     try:
         val = int(raw_num, base=0)
@@ -37,7 +35,7 @@ def parse_data(word: str, check: bool = True):
             f'Expected numerical argument got {word}, line {current_line}'
         )
 
-    return int_to_hex(val, check)
+    return int_to_hex(val)
 
 
 def read_data_section(file: TextIOWrapper) -> list[str]:
@@ -138,13 +136,11 @@ def read_code_section(
 
     nop_padding = parse_instruction(['nop'], isa) * 4
 
-    sec = -1
     for line in file:
         line = line.lower()
 
         # end of section
         if line.startswith('.'):
-            sec = getSection(line)
             break
 
         # remove commas then split on whitespace
@@ -156,19 +152,9 @@ def read_code_section(
 
         current_line += 1
 
-    return code_list, sec
+    return code_list
 
-def getSection(line: str) -> int :
-    if line.startswith('.code'):
-        return 32
-    elif line.startswith('.interrupt'):
-        return 0
-    elif line.startswith('.org'):
-        raw_num = line.split()[1]
-        raw_num = '0x' + raw_num
-        return int(raw_num, base=0)
-        
-    return -1
+
 def main():
     parser = argparse.ArgumentParser(
         description="Assembler",
@@ -196,47 +182,56 @@ def main():
     with open(file_path) as file:
         global current_line
         # find data section
-        # for line in file:
-        #     line = line.lower()
-        #     if line.startswith('.data'):
-        #         break
-
-        #     current_line += 1
-
-        # # fill data
-        # data, _ = read_data_section(file)
-        # with open(file_name + '_data.txt', 'w') as data_file:
-        #     for hex_num in data:
-        #         data_file.write(f'{hex_num:0>4}\n')
-
-        # file.seek(0)
-        # current_line = 0
-
-        # find code
-        all_code = []
-        section = -1
         for line in file:
-            line = line.lower().rstrip()
-            if section <= -1:
-                section = getSection(line)
-            if section <= -1:
-                if not is_comment(line):
-                    print(f'Warning Unkown line: {line}\nSkipping...\n')
-                    continue
-            else:
-                if section > len(all_code):
-                    for _ in range(section - len(all_code)):
-                        all_code.append(0)
-                code, sec = read_code_section(file, isa, config['no_hazards'])
-                all_code.extend(code)
-                section = sec
+            line = line.lower()
+            if line.startswith('.data'):
+                break
 
             current_line += 1
 
+        # fill data
+        data, _ = read_data_section(file)
+        with open(file_name + '_data.txt', 'w') as data_file:
+            for hex_num in data:
+                data_file.write(f'{hex_num:0>4}\n')
+
+        file.seek(0)
+        current_line = 0
+
+        # find interrupt section
+        for line in file:
+            line = line.lower()
+            if line.startswith('.interrupt') or line.startswith('.org 0'):
+                break
+
+            current_line += 1
+
+        # fill interrupt
+        interrupt_code = read_code_section(file, isa, config['no_hazards'])
+        if len(interrupt_code) > 32:
+            raise MemoryError('Interrupt code size may not exceed 32 words')
+
+        with open(file_name + '_code.txt', 'w') as code_file:
+            for hex_num in interrupt_code:
+                code_file.write(f'{hex_num:0>4}\n')
+            for _ in range(32 - len(interrupt_code)):
+                code_file.write('0\n')
+
+        file.seek(0)
+        current_line = 0
+
+        # find code section
+        for line in file:
+            line = line.lower()
+            if line.startswith('.code') or line.startswith('.org 20'):
+                break
+
+            current_line += 1
 
         # fill code
+        code = read_code_section(file, isa, config['no_hazards'])
         with open(file_name + '_code.txt', 'a') as code_file:
-            for hex_num in all_code:
+            for hex_num in code:
                 code_file.write(f'{hex_num:0>4}\n')
 
 
